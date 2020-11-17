@@ -39,6 +39,8 @@ app.get('/logout', (req, res) => {
     res.json(true);
 })
 
+// TODO: user registration
+
 app.get('/tweet/allIDs', (req, res) => {
     // sends out array of integer IDs for all tweet objects, in ascending order of creation
     res.json(Tweet.getAllIds());
