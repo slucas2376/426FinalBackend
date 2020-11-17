@@ -20,17 +20,18 @@ app.use(expressSession({
 
 
 app.post('/login', (req, res) => {
+    // requires parameters userId and password, sends true if successful
     // lmao what's an """encryption""", seriously don't use passwords you care about here
-    let user = req.body.user;
+    let userId = req.body.userId;
     let password = req.body.password;
-    let loginData = userData.get(user);
+    let loginData = userData.get(userId);
     if (loginData == null) {
         res.status(404).send("404: user not found");
         return;
     }
     if (loginData.password == password) {
         // successful login
-        req.session.user = user;
+        req.session.user = userId;
         res.json(true);
         return;
     }
@@ -38,17 +39,21 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
+    // logs out current user, sends back true
     delete req.session.user;
     res.json(true);
 })
 
-// TODO: user registration
 app.post('/register', (req, res) => {
-    // takes params of username, display name, avatar (avatar is optional and defaults to whatever link we find for default)
+    // takes params of (str) username, (str) display name, (str) password, (str image link) avatar (avatar is optional and defaults to whatever link we find for default)
+    // sends back true on successful registration
     let userId = req.body.userId;
+    if (User.findById(userId).id == userId) { res.status(400).send("400 bad request: user already exists") };
     let displayName = req.body.displayName;
+    let password = req.body.password;
     let avatar = req.body.avatar;
-
+    let u = User.create(userId, displayName, password, avatar);
+    res.json(true);
 })
 
 app.get('/tweet/allIDs', (req, res) => {
@@ -67,8 +72,9 @@ app.get('/users', (req, res) => {
     return;
 })
 
-app.get('users/:id', (req, res) => {
-    let u = User.findById(req.params.id);
+app.get('/users/:id', (req, res) => {
+    // returns user info for the relevant id, except for password
+    let u = User.findById(req.params.id).view();
     if (u == null) {
         res.status(404).send("404: user not found");
         return;
@@ -139,7 +145,7 @@ app.put('/tweet/:id', (req, res) => {
     res.json(t);
 })
 
-app.delete('tweet/:id', (req, res) => {
+app.delete('/tweet/:id', (req, res) => {
     // deleting tweets; will need auth once implemented
     let t = Tweet.findById(req.params.id);
     if (t == null) {
@@ -150,9 +156,23 @@ app.delete('tweet/:id', (req, res) => {
     res.json(true);
 })
 
+app.delete('/user/:id', (req, res) => {
+    // deleting user; need to either be logged in as that user or as admin, sends back true on success
+    let currUser = User.findById(req.session.user);
+    if ((currUser.id == req.params.id) || (currUser.type == "admin")) {
+        User.delete(id);
+        res.json(true);
+        return;
+    }
+    if ((currUser == undefined) || (currUser == null)) { res.status("404 no user found")};
+    res.status(403).send("403 forbidden");
+
+})
+
 // port will probably come from heroku; look at tutorials for that!
 const port = 3030;
 app.listen(port, () => {
     console.log('server running on port ' + port);
     User.createAdmin("sclu", "Dev Sophie", "426final", "a picture of edelgard probably");
+    User.create("test", "test account", "test")
 })

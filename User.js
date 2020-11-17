@@ -12,6 +12,15 @@ class User {
     update() {
         userData.set(this.id.toString(), this);
     }
+
+    view() {
+        // generates a UserView object, which is just a User object without the password field
+        let viewId = this.id;
+        let viewDisplayName = this.displayName;
+        let viewAvatar = this.avatar;
+        let viewType = this.type;
+        return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, type: viewType}
+    }
 }
 
 User.create = (id, displayName, password, avatar = "[default link]") => {
@@ -28,15 +37,12 @@ User.createAdmin = (id, displayName, password, avatar = "[default link]") => {
 }
 
 User.findById = (id) => {
-    let u = userData.get(id);
-    if (u != null) {
-        return userData.get(id);
-    }
-    return null;
+    let u = userData.data[id];
+    return u;
 }
 
 User.getAll = () => {
-    // return an array of all user IDs
+    // return a JSON object containing all users as key/value pairs
     return userData.data;
 }
 
