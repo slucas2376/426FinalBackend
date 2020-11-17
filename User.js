@@ -1,28 +1,48 @@
-const loginData = require('data-store')({path: process.cwd() + './data/users.json'});
+const userData = require('data-store')({path: process.cwd() + './data/users.json'});
 
-class Tweet {
-    constructor(id, displayName)
+class User {
+    constructor(id, displayName, password, avatar)
     {this.id = id;
-    this.userId = userId;
-    this.type = type;
-    this.body = body;
-    this.parentId = parentId;
-    this.edited = false;
-    this.createdAt = new Date();}
-    // add other properties, incl default vals; are we adding media links? I don't want to have a cdn so no uploading of our own content
-    edited = false;
-    editedAt = null;
-    likeCount = 0;
-    replyCount = 0;
-    retweetCount = 0;
+    this.displayName = displayName;
+    this.password = password;
+    this.avatar = avatar;
+    this.type = "user";
+    };
 
     update() {
-        this.isUpdated = true;
-        this.updatedAt = new Date();
-        tweetData.set(this.id.toString(), this);
-    }
-
-    delete() {
-        tweetData.del(this.id.toString());
+        userData.set(this.id.toString(), this);
     }
 }
+
+User.create = (id, displayName, password, avatar = "[default link]") => {
+    let u = new User(id, displayName, password, avatar);
+    userData.set(u.id.toString(), u);
+    return u;
+}
+
+User.createAdmin = (id, displayName, password, avatar = "[default link]") => {
+    let u = new User(id, displayName, password, avatar);
+    u.type = "admin";
+    userData.set(u.id.toString(), u);
+    return u;
+}
+
+User.findById = (id) => {
+    let u = userData.get(id);
+    if (u != null) {
+        return userData.get(id);
+    }
+    return null;
+}
+
+User.getAll = () => {
+    // return an array of all user IDs
+    return userData.data;
+}
+
+User.getAllIds = () => {
+    // return an array of all user IDs
+    return Object.keys(userData.data);
+}
+
+module.exports = User;

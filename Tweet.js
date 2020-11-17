@@ -3,12 +3,12 @@ const tweetData = require('data-store')({path: process.cwd() + './data/tweets.js
 class Tweet {
     constructor(id, userId, type, body, parentId)
     {this.id = id;
-    this.userId = userId;
-    this.type = type;
-    this.body = body;
-    this.parentId = parentId;
-    this.edited = false;
-    this.createdAt = new Date();}
+        this.userId = userId;
+        this.type = type;
+        this.body = body;
+        this.parentId = parentId;
+        this.edited = false;
+        this.createdAt = new Date();}
     // add other properties, incl default vals; are we adding media links? I don't want to have a cdn so no uploading of our own content
     edited = false;
     editedAt = null;
@@ -29,12 +29,12 @@ class Tweet {
 
 Tweet.getAllIds = () => {
     // return an array of all tweet IDs
-    Object.keys(tweetData.data).map((id => {return parseInt(id);}));
+    return Object.keys(tweetData.data).map((id => {return parseInt(id);}));
 }
 
 Tweet.getAllIdsForAuthor = (userId) => {
     // returns all tweets with author userId
-    Object.keys(tweetData.data).map((id => {return parseInt(id);})).filter(id => tweetData.get(id).userId == author).map(id => parseInt(id));
+    return Object.keys(tweetData.data).map((id => {return parseInt(id);})).filter(id => tweetData.get(id).userId == author).map(id => parseInt(id));
 }
 
 Tweet.findById = (id) => {
@@ -52,7 +52,7 @@ Tweet.nextId = Tweet.getAllIds().reduce((max, nextId) => {
     return max;
 }, -1) + 1;
 
-Tweet.create = (userId, type, body, parentId = 'no parent') {
+Tweet.create = (userId, type, body, parentId = 'no parent') => {
     let newId = Tweet.nextId;
     Tweet.nextId += 1;
     let t = new Tweet(newId, userId, type, body, parentId)

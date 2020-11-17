@@ -4,6 +4,9 @@ const app = express();
 
 const Tweet = require('./Tweet.js');
 
+const User = require('./User.js');
+const userData = require('data-store')({path: process.cwd() + './data/users.json'});
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
@@ -12,7 +15,7 @@ app.use(expressSession({
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
-    saveuninitialized: false
+    saveUninitialized: false
 }));
 
 
@@ -20,12 +23,12 @@ app.post('/login', (req, res) => {
     // lmao what's an """encryption""", seriously don't use passwords you care about here
     let user = req.body.user;
     let password = req.body.password;
-    let userData = loginData.get(user);
-    if (userData == null) {
+    let loginData = userData.get(user);
+    if (loginData == null) {
         res.status(404).send("404: user not found");
         return;
     }
-    if (userData.password == password) {
+    if (loginData.password == password) {
         // successful login
         req.session.user = user;
         res.json(true);
@@ -39,11 +42,40 @@ app.get('/logout', (req, res) => {
     res.json(true);
 })
 
+// TODO: user registration
+app.post('/register', (req, res) => {
+    // takes params of username, display name, avatar (avatar is optional and defaults to whatever link we find for default)
+    let userId = req.body.userId;
+    let displayName = req.body.displayName;
+    let avatar = req.body.avatar;
+
+})
+
 app.get('/tweet/allIDs', (req, res) => {
     // sends out array of integer IDs for all tweet objects, in ascending order of creation
     res.json(Tweet.getAllIds());
     return;
 });
+
+app.get('/users/IDs', (req, res) => {
+    res.json(User.getAllIds());
+    return;
+})
+
+app.get('/users', (req, res) => {
+    res.json(User.getAll());
+    return;
+})
+
+app.get('users/:id', (req, res) => {
+    let u = User.findById(req.params.id);
+    if (u == null) {
+        res.status(404).send("404: user not found");
+        return;
+    }
+    res.json(u);
+    return;
+})
 
 // make a get50mostrecent maybe?
 
@@ -95,10 +127,10 @@ app.put('/tweet/:id', (req, res) => {
         return;
     }
     if (req.session.user)
-    if (t == null) {
-        res.status(404).send("404: Tweet could not be found.");
-        return;
-    }
+        if (t == null) {
+            res.status(404).send("404: Tweet could not be found.");
+            return;
+        }
     // if we're allowing attachment of media, here is where that's edited too
     let body = req.body.body;
     t.body = body;
@@ -121,5 +153,6 @@ app.delete('tweet/:id', (req, res) => {
 // port will probably come from heroku; look at tutorials for that!
 const port = 3030;
 app.listen(port, () => {
-    console.log('server test running on port ' + port);
+    console.log('server running on port ' + port);
+    User.createAdmin("sclu", "Dev Sophie", "426final", "a picture of edelgard probably");
 })
