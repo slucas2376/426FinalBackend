@@ -1,4 +1,4 @@
-const tweetData = require('data-store')({path: process.cwd() + './data/tweets.json'});
+const tweetData = require('data-store')({path: process.cwd() + '/data/tweets.json'});
 
 class Tweet {
     constructor(id, userId, type, body, parentId)

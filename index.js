@@ -5,7 +5,7 @@ const app = express();
 const Tweet = require('./Tweet.js');
 
 const User = require('./User.js');
-const userData = require('data-store')({path: process.cwd() + './data/users.json'});
+const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -45,7 +45,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    // takes params of (str) username, (str) display name, (str) password, (str image link) avatar (avatar is optional and defaults to whatever link we find for default)
+    // takes fields of (str) userId, (str) displayName, (str) password, (str image link) avatar (avatar is optional and defaults to whatever link we find for default)
     // sends back true on successful registration
     let userId = req.body.userId;
     if (User.findById(userId).id == userId) { res.status(400).send("400 bad request: user already exists") };
@@ -56,7 +56,7 @@ app.post('/register', (req, res) => {
     res.json(true);
 })
 
-app.get('/tweet/allIDs', (req, res) => {
+app.get('/tweets/allIDs', (req, res) => {
     // sends out array of integer IDs for all tweet objects, in ascending order of creation
     res.json(Tweet.getAllIds());
     return;
@@ -73,19 +73,21 @@ app.get('/users', (req, res) => {
 })
 
 app.get('/users/:id', (req, res) => {
-    // returns user info for the relevant id, except for password
-    let u = User.findById(req.params.id).view();
-    if (u == null) {
-        res.status(404).send("404: user not found");
+    // sends JSON object User for the relevant id, will only include password field if logged in as that user or account type admin
+    let u = User.findById(req.params.id);
+    if ((req.session.user == u.id) || (User.findById(req.session.user).type == "admin")) {
+        res.json(u);
+        return;}
+    if (u != null) {
+        res.json(u.view());
         return;
     }
-    res.json(u);
-    return;
+    res.status(404).send("404: user not found");
 })
 
 // make a get50mostrecent maybe?
 
-app.get('/tweet/:id', (req, res) => {
+app.get('/tweets/:id', (req, res) => {
     // finds tweet by tweet ID, sends out tweet object
     let t = Tweet.findById(req.params.id);
     if (t == null) {
@@ -96,12 +98,12 @@ app.get('/tweet/:id', (req, res) => {
     return;
 });
 
-app.get('/tweet', (req, res) => {
+app.get('/tweets', (req, res) => {
     // sends out a filtered array of some sort;
     // arr = something.
 })
 
-app.post('/tweet', (req, res) => {
+app.post('/tweets', (req, res) => {
     // adds new tweet to tweetData
     if (req.session.user == undefined) {
         res.status(403).send("403 forbidden")
@@ -124,7 +126,7 @@ app.post('/tweet', (req, res) => {
     return res.json(t);
 });
 
-app.put('/tweet/:id', (req, res) => {
+app.put('/tweets/:id', (req, res) => {
     // editing tweets; will need auth once implemented
     let t = Tweet.findById(req.params.id);
     // user filtering
@@ -145,7 +147,7 @@ app.put('/tweet/:id', (req, res) => {
     res.json(t);
 })
 
-app.delete('/tweet/:id', (req, res) => {
+app.delete('/tweets/:id', (req, res) => {
     // deleting tweets; will need auth once implemented
     let t = Tweet.findById(req.params.id);
     if (t == null) {
@@ -156,12 +158,14 @@ app.delete('/tweet/:id', (req, res) => {
     res.json(true);
 })
 
-app.delete('/user/:id', (req, res) => {
+app.delete('/users/:id', (req, res) => {
     // deleting user; need to either be logged in as that user or as admin, sends back true on success
     let currUser = User.findById(req.session.user);
     if ((currUser.id == req.params.id) || (currUser.type == "admin")) {
-        User.delete(id);
-        res.json(true);
+        let temp = User.delete(req.params.id);
+        if (temp) {res.json(true);
+        return;}
+        res.status(400).send("400 bad request: user could not be deleted");
         return;
     }
     if ((currUser == undefined) || (currUser == null)) { res.status("404 no user found")};

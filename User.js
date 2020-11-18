@@ -1,4 +1,4 @@
-const userData = require('data-store')({path: process.cwd() + './data/users.json'});
+const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 class User {
     constructor(id, displayName, password, avatar)
@@ -37,7 +37,14 @@ User.createAdmin = (id, displayName, password, avatar = "[default link]") => {
 }
 
 User.findById = (id) => {
+    // returns user object for given id; if id is undefined, returns empty object;
+    if (id == undefined) {
+        return {};
+    }
     let u = userData.data[id];
+    if (u == undefined) {
+        return {};
+    }
     return u;
 }
 
@@ -49,6 +56,15 @@ User.getAll = () => {
 User.getAllIds = () => {
     // return an array of all user IDs
     return Object.keys(userData.data);
+}
+
+User.delete = (id) => {
+    // if user exists, deletes user and returns true, else returns false
+    if(userData.get(id) != null) {
+        userData.del(id);
+        return true;
+    }
+    return false;
 }
 
 module.exports = User;

@@ -1,0 +1,16 @@
+{
+  "sclu": {
+    "id": "sclu",
+    "displayName": "Dev Sophie",
+    "password": "426final",
+    "avatar": "a picture of edelgard probably",
+    "type": "admin"
+  },
+  "test": {
+    "id": "test",
+    "displayName": "test account",
+    "password": "test",
+    "avatar": "[default link]",
+    "type": "user"
+  }
+}
