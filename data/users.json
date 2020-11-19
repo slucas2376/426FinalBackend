@@ -4,13 +4,19 @@
     "displayName": "Dev Sophie",
     "password": "426final",
     "avatar": "something edelgard-related",
-    "type": "admin"
+    "profileDescription": "description goes here",
+    "type": "admin",
+    "likedTweets": [
+      "6"
+    ]
   },
   "test": {
     "id": "test",
     "displayName": "test",
     "password": "test",
     "avatar": "[default link]",
-    "type": "user"
+    "profileDescription": "test description",
+    "type": "user",
+    "likedTweets": []
   }
 }

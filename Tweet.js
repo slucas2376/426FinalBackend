@@ -1,3 +1,4 @@
+const User = require("./User");
 const tweetData = require('data-store')({path: process.cwd() + '/data/tweets.json'});
 
 class Tweet {
@@ -15,6 +16,7 @@ class Tweet {
     likeCount = 0;
     replyCount = 0;
     retweetCount = 0;
+    replyIds = [];
 
     edit() {
         this.isEdited = true;
@@ -45,7 +47,7 @@ Tweet.getAllIdsForAuthor = (userId) => {
 Tweet.findById = (id) => {
     let t = tweetData.get(id);
     if (t != null && t != undefined) {
-        // old code; generally I can sanitize the constructo or sanitize this and I choose to sanitize the constructor
+        // old code; generally I can sanitize the constructor or sanitize this and I choose to sanitize the constructor
         // return new Tweet(t.id, t.userId, t.type, t.body, t.parentId);
         return t;
     }
@@ -91,6 +93,24 @@ Tweet.likeCountDecrement = (id) => {
         t.likeCount -= 1;
         tweetData.set(id.toString(), t);
     }
+}
+
+Tweet.isMine = (userId, tweetId) => {
+    // if user posted tweet, returns true; else returns false
+    let t = Tweet.findById(tweetId);
+    if (t.userId = userId) {
+        return true;
+    }
+    return false;
+}
+
+Tweet.isLiked = (userId, tweetId) => {
+    // if user liked tweet, returns true; else returns false
+    let u = User.findById(userId);
+    if (u.likedTweets.includes(tweetId.toString())) {
+        return true;
+    }
+    return false;
 }
 
 module.exports = Tweet;

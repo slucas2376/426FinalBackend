@@ -67,9 +67,9 @@ app.post('/register', (req, res) => {
     res.json(true);
 })
 
-app.get('/users/IDs', (req, res) => {
-    // sends list of all account IDs, used for testing only
-    res.json(User.getAllIds());
+app.get('/users/idnames', (req, res) => {
+    // sends array of JSON objects containing a userId field and a displayName field, for all registered users
+    res.json(User.getAllIdNamePairs());
     return;
 })
 
@@ -110,14 +110,16 @@ app.put('/users/:id/', (req, res) => {
         let displayName = req.body.displayName;
         let password = req.body.password;
         let avatar = req.body.avatar;
+        let desc = req.body.profileDescription;
         if (displayName.length == 0) {displayName = targetUser.displayName};
         if (password.length == 0) {password = targetUser.password};
         if (avatar.length == 0) {avatar = targetUser.avatar};
+        if (desc.length == 0) {desc = targetUser.profileDescription}
         if (displayName.length > 32 || password.length > 24 || avatar.length > 120) {
             res.status(400).send("400 bad request: parameter too long");
             return;
         }
-        User.update(req.params.id, displayName, password, avatar);
+        User.update(req.params.id, displayName, password, avatar, desc);
         res.json(true);
         return;
     }
@@ -155,10 +157,14 @@ app.get('/tweets/:id', (req, res) => {
         res.status(404).send("404: Tweet could not be found.");
         return;
     }
-    if (t.isDeleted) {res.json("Tweet has been deleted.")}
+    if (t.isDeleted) {res.json("Tweet has been deleted."); return;}
     res.json(t);
     return;
 });
+
+app.get('/tweets/recent', (req, res) => {
+    // gets _____ most recent tweets, probably? depends on body fields
+})
 
 app.get('/tweets', (req, res) => {
     // sends out a filtered array of some sort probably;
@@ -195,9 +201,38 @@ app.post('/tweets', (req, res) => {
     return res.json(t);
 });
 
-// implement like function; probably dual-function like/unlike just like the button for ease of frontend implementation, cannot like own tweet
 app.post('/tweets/:id/like', (req, res) => {
-    // this is the function body
+    let currUser = User.findById(req.session.user);
+    if (currUser == {}) {
+        res.status(403).send("403 forbidden: not logged in.")
+        return;
+    }
+    let tweet = Tweet.findById(req.params.id);
+    if (tweet == {}) {
+        res.status(404).send("404: tweet not found.");
+        return;
+    }
+    if (tweet.isDeleted) {
+        User.unlikeTweet(req.session.user, req.params.id);
+        res.status(400).send("400 bad request: cannot like a deleted tweet.")
+        return;
+    }
+    if (tweet.userId == currUser.id) {
+        res.status(400).send("400 bad request: cannot like own tweet");
+        return;
+    }
+    if (currUser.likedTweets.includes(req.params.id)) {
+        User.unlikeTweet(currUser.id, req.params.id);
+        Tweet.likeCountDecrement(req.params.id);
+        res.json(true);
+        return;
+    }
+    if (!currUser.likedTweets.includes(req.params.id)) {
+        User.likeTweet(currUser.id, req.params.id);
+        Tweet.likeCountIncrement(req.params.id);
+        res.json(true);
+        return;
+    }
 })
 
 app.put('/tweets/:id', (req, res) => {

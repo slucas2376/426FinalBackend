@@ -1,35 +1,41 @@
 const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 class User {
-    constructor(id, displayName, password, avatar, type = "user")
+    constructor(id, displayName, password, avatar, profileDescription, type = "user")
     {this.id = id;
     this.displayName = displayName;
     this.password = password;
     this.avatar = avatar;
+    this.profileDescription = profileDescription;
     this.type = type;
+    this.likedTweets = [];
     };
 }
 
-User.create = (id, displayName, password, avatar = "[default link]") => {
-    let u = new User(id, displayName, password, avatar);
+User.create = (id, displayName, password, avatar = "[default link]", profileDescription = "Your description goes here.") => {
+    let u = new User(id, displayName, password, avatar, profileDescription);
     userData.set(u.id.toString(), u);
     return u;
 }
 
-User.createAdmin = (id, displayName, password, avatar = "[default link]") => {
-    let u = new User(id, displayName, password, avatar, "admin");
+User.createAdmin = (id, displayName, password, avatar = "[default link]", profileDescription = "Your description goes here.") => {
+    let u = new User(id, displayName, password, avatar, profileDescription, "admin");
     u.type = "admin";
     userData.set(u.id.toString(), u);
     return u;
 }
 
-User.update = (id, displayName, password, avatar) => {
+User.update = (id, displayName, password, avatar, profileDescription) => {
     let old = User.findById(id);
+    if (old == {}) {return;}
+    let oldLikes = old.likedTweets;
     if (old.type == "admin") {
-        let a = new User(id, displayName, password, avatar, "admin")
+        let a = new User(id, displayName, password, avatar, profileDescription, "admin")
+        a.likedTweets = oldLikes;
         userData.set(id, a);
     } else {
-        let u = new User(id, displayName, password, avatar)
+        let u = new User(id, displayName, password, avatar, profileDescription)
+        u.likedTweets = oldLikes;
         userData.set(id, u);
     };
 }
@@ -39,17 +45,18 @@ User.makeView = (userObj) => {
     let viewId = userObj.id;
     let viewDisplayName = userObj.displayName;
     let viewAvatar = userObj.avatar;
+    let viewDescription = userObj.profileDescription;
     let viewType = userObj.type;
-    return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, type: viewType}
+    return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, profileDescription: viewDescription, type: viewType}
 }
 
 User.findById = (id) => {
     // returns user object for given id; if id is undefined, returns empty object;
-    if (id == undefined) {
+    if (id == undefined || id == null) {
         return {};
     }
     let u = userData.data[id];
-    if (u == undefined) {
+    if (u == undefined || u == null) {
         return {};
     }
     return u;
@@ -70,9 +77,14 @@ User.getAllView = () => {
     )
 }
 
-User.getAllIds = () => {
-    // return an array of all user IDs
-    return Object.keys(userData.data);
+User.getAllIdNamePairs = () => {
+    // return an array of objects with fields userId and displayName as currently in storage
+    let data = Object.keys(userData.data)
+    let result = [];
+    for (let user of data) {
+        result.push({userId: `${user}`, displayName: `${userData.data[user].displayName}`})
+    }
+    return result;
 }
 
 User.delete = (id) => {
@@ -83,5 +95,27 @@ User.delete = (id) => {
     }
     return false;
 }
+
+User.unlikeTweet = (userId, tweetId) => {
+    let u = User.findById(userId);
+    if (u == {}) {return;}
+    if (u.likedTweets.includes(tweetId.toString())) {
+        const index = u.likedTweets.indexOf(tweetId.toString());
+        if (index > -1) {
+            u.likedTweets.splice(index, 1);
+        }
+        userData.set(userId, u);
+    }
+}
+
+User.likeTweet = (userId, tweetId) => {
+    let u = User.findById(userId);
+    if (u == {}) {return;}
+    if (!u.likedTweets.includes(tweetId)) {
+        u.likedTweets.push(tweetId);
+        userData.set(userId, u);
+    }
+}
+
 
 module.exports = User;
