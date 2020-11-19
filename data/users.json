@@ -3,12 +3,12 @@
     "id": "sclu",
     "displayName": "Dev Sophie",
     "password": "426final",
-    "avatar": "a picture of edelgard probably",
+    "avatar": "something edelgard-related",
     "type": "admin"
   },
   "test": {
     "id": "test",
-    "displayName": "test account",
+    "displayName": "test",
     "password": "test",
     "avatar": "[default link]",
     "type": "user"

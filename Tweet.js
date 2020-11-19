@@ -7,23 +7,28 @@ class Tweet {
         this.type = type;
         this.body = body;
         this.parentId = parentId;
-        this.edited = false;
-        this.createdAt = new Date();}
+        this.createdAt = new Date();
+        this.isDeleted = false;}
     // add other properties, incl default vals; are we adding media links? I don't want to have a cdn so no uploading of our own content
-    edited = false;
+    isEdited = false;
     editedAt = null;
     likeCount = 0;
     replyCount = 0;
     retweetCount = 0;
 
+    edit() {
+        this.isEdited = true;
+        this.editedAt = new Date();
+        tweetData.set(this.id.toString(), this);
+    }
+
     update() {
-        this.isUpdated = true;
-        this.updatedAt = new Date();
         tweetData.set(this.id.toString(), this);
     }
 
     delete() {
-        tweetData.del(this.id.toString());
+        // replaces Tweet object with a version of itself containing only an id field containing its id and an isDeleted field set to true
+        tweetData.set(this.id.toString(), {id: this.id.toString(), isDeleted: true});
     }
 }
 
@@ -39,8 +44,10 @@ Tweet.getAllIdsForAuthor = (userId) => {
 
 Tweet.findById = (id) => {
     let t = tweetData.get(id);
-    if (t != null) {
-        return new Tweet(t.id, t.userId, t.type, t.body, t.parentId);
+    if (t != null && t != undefined) {
+        // old code; generally I can sanitize the constructo or sanitize this and I choose to sanitize the constructor
+        // return new Tweet(t.id, t.userId, t.type, t.body, t.parentId);
+        return t;
     }
     return null;
 }
@@ -60,9 +67,30 @@ Tweet.create = (userId, type, body, parentId = 'no parent') => {
     return t;
 }
 
-// testing create tweet
+Tweet.replyCountIncrement = (id) => {
+    let t = tweetData.get(id);
+    t.replyCount += 1;
+    tweetData.set(id.toString(), t);
+}
 
-// let t1 = new Tweet(0, "me", "tweet", "this is the first test tweet!");
-// tweetData.set(t1.id.toString(), t1);
+Tweet.retweetCountIncrement = (id) => {
+    let t = tweetData.get(id);
+    t.retweetCount += 1;
+    tweetData.set(id.toString(), t);
+}
+
+Tweet.likeCountIncrement = (id) => {
+    let t = tweetData.get(id);
+    t.likeCount += 1;
+    tweetData.set(id.toString(), t);
+}
+
+Tweet.likeCountDecrement = (id) => {
+    let t = tweetData.get(id);
+    if (t.likeCount != 0) {
+        t.likeCount -= 1;
+        tweetData.set(id.toString(), t);
+    }
+}
 
 module.exports = Tweet;

@@ -1,26 +1,13 @@
 const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 class User {
-    constructor(id, displayName, password, avatar)
+    constructor(id, displayName, password, avatar, type = "user")
     {this.id = id;
     this.displayName = displayName;
     this.password = password;
     this.avatar = avatar;
-    this.type = "user";
+    this.type = type;
     };
-
-    update() {
-        userData.set(this.id.toString(), this);
-    }
-
-    view() {
-        // generates a UserView object, which is just a User object without the password field
-        let viewId = this.id;
-        let viewDisplayName = this.displayName;
-        let viewAvatar = this.avatar;
-        let viewType = this.type;
-        return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, type: viewType}
-    }
 }
 
 User.create = (id, displayName, password, avatar = "[default link]") => {
@@ -30,10 +17,30 @@ User.create = (id, displayName, password, avatar = "[default link]") => {
 }
 
 User.createAdmin = (id, displayName, password, avatar = "[default link]") => {
-    let u = new User(id, displayName, password, avatar);
+    let u = new User(id, displayName, password, avatar, "admin");
     u.type = "admin";
     userData.set(u.id.toString(), u);
     return u;
+}
+
+User.update = (id, displayName, password, avatar) => {
+    let old = User.findById(id);
+    if (old.type == "admin") {
+        let a = new User(id, displayName, password, avatar, "admin")
+        userData.set(id, a);
+    } else {
+        let u = new User(id, displayName, password, avatar)
+        userData.set(id, u);
+    };
+}
+
+User.makeView = (userObj) => {
+    // generates a UserView object, which is just a User object without the password field
+    let viewId = userObj.id;
+    let viewDisplayName = userObj.displayName;
+    let viewAvatar = userObj.avatar;
+    let viewType = userObj.type;
+    return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, type: viewType}
 }
 
 User.findById = (id) => {
@@ -51,6 +58,16 @@ User.findById = (id) => {
 User.getAll = () => {
     // return a JSON object containing all users as key/value pairs
     return userData.data;
+}
+
+User.getAllView = () => {
+    let arr = User.getAllIds();
+    let obj = {};
+    arr.forEach(id => {
+        let uid = User.findById(id)
+        obj[`${id}`] = User.makeView(uid);
+        }
+    )
 }
 
 User.getAllIds = () => {

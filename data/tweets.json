@@ -1,0 +1,77 @@
+{
+  "0": {
+    "edited": false,
+    "editedAt": null,
+    "likeCount": 0,
+    "replyCount": 0,
+    "retweetCount": 0,
+    "id": 0,
+    "userId": "sclu",
+    "type": "tweet",
+    "body": "this is a test tweet",
+    "parentId": "no parent",
+    "createdAt": "2020-11-19T10:37:22.192Z"
+  },
+  "1": {
+    "edited": false,
+    "editedAt": null,
+    "likeCount": 0,
+    "replyCount": 0,
+    "retweetCount": 0,
+    "id": 1,
+    "userId": "sclu",
+    "type": "retweet",
+    "body": "this is a test retweet",
+    "parentId": "0",
+    "createdAt": "2020-11-19T10:38:18.022Z"
+  },
+  "2": {
+    "edited": false,
+    "editedAt": null,
+    "likeCount": 0,
+    "replyCount": 0,
+    "retweetCount": 0,
+    "id": 2,
+    "userId": "sclu",
+    "type": "reply",
+    "body": "this is a test reply",
+    "parentId": "0",
+    "createdAt": "2020-11-19T10:38:42.741Z"
+  },
+  "3": {
+    "isEdited": true,
+    "editedAt": "2020-11-19T11:02:30.200Z",
+    "likeCount": 0,
+    "replyCount": 0,
+    "retweetCount": 0,
+    "id": 3,
+    "userId": "sclu",
+    "type": "tweet",
+    "body": "this tweet has been successfully edited again",
+    "parentId": "no parent",
+    "createdAt": "2020-11-19T11:02:30.200Z",
+    "isDeleted": false
+  },
+  "4": {
+    "id": "4",
+    "isDeleted": true
+  },
+  "5": {
+    "id": "5",
+    "isDeleted": true
+  },
+  "6": {
+    "isEdited": false,
+    "editedAt": null,
+    "likeCount": 0,
+    "replyCount": 3,
+    "retweetCount": 0,
+    "id": 6,
+    "userId": "test",
+    "type": "retweet",
+    "body": "normal user edit test",
+    "parentId": "5",
+    "createdAt": "2020-11-19T11:46:10.631Z",
+    "isDeleted": false
+  }
+}
