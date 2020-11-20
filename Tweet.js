@@ -27,11 +27,6 @@ class Tweet {
     update() {
         tweetData.set(this.id.toString(), this);
     }
-
-    delete() {
-        // replaces Tweet object with a version of itself containing only an id field containing its id and an isDeleted field set to true
-        tweetData.set(this.id.toString(), {id: this.id.toString(), isDeleted: true});
-    }
 }
 
 Tweet.getAllIds = () => {
@@ -45,13 +40,25 @@ Tweet.getAllIdsForAuthor = (userId) => {
 }
 
 Tweet.findById = (id) => {
-    let t = tweetData.get(id);
+    let t = tweetData.get(id.toString());
     if (t != null && t != undefined) {
         // old code; generally I can sanitize the constructor or sanitize this and I choose to sanitize the constructor
         // return new Tweet(t.id, t.userId, t.type, t.body, t.parentId);
         return t;
     }
     return null;
+}
+
+Tweet.generateView = (tweetId) => {
+    // will return empty object if tweet does not exist;
+    let t = Tweet.findById(tweetId);
+    if (!t.isDeleted) {
+        let v = t;
+        v.isMine = false;
+        v.isLiked = false;
+        v.author = {};
+        return v;
+    } else { return t; }
 }
 
 Tweet.nextId = Tweet.getAllIds().reduce((max, nextId) => {
@@ -111,6 +118,12 @@ Tweet.isLiked = (userId, tweetId) => {
         return true;
     }
     return false;
+}
+
+Tweet.delete = (id) => {
+    // replaces Tweet object with a version of itself containing only an id field containing its id and an isDeleted field set to true
+    t = Tweet.findById(id.toString());
+    tweetData.set(id.toString(), {id: id.toString(), isDeleted: true});
 }
 
 module.exports = Tweet;

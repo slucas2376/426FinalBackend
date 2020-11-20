@@ -18,7 +18,7 @@ app.use(expressSession({
     saveUninitialized: false
 }));
 
-// login API
+// login/user database interaction API
 app.post('/login', (req, res) => {
     // requires parameters userId and password, sends true if successful
     // lmao what's an """encryption""", seriously don't use passwords you care about here
@@ -128,9 +128,16 @@ app.put('/users/:id/', (req, res) => {
 
 app.delete('/users/:id', (req, res) => {
     // deleting user; need to either be logged in as that user or as admin, sends back true on success
+    // also deletes all user-posted tweets
     let currUser = User.findById(req.session.user);
     if ((currUser.id == req.params.id) || (currUser.type == "admin")) {
+        let tweets = User.findById(req.params.id).postedTweets;
+        let t = "";
+        for (t of tweets) {
+            Tweet.delete(t);
+        }
         let temp = User.delete(req.params.id);
+        delete req.session.user;
         if (temp) {res.json(true);
             return;}
         res.status(400).send("400 bad request: user could not be deleted");
@@ -148,9 +155,7 @@ app.get('/tweets/allIDs', (req, res) => {
     return;
 });
 
-// make a get50mostrecent maybe?
-
-app.get('/tweets/:id', (req, res) => {
+app.get('/tweet/:id', (req, res) => {
     // finds tweet by tweet ID, sends out tweet object
     let t = Tweet.findById(req.params.id);
     if (t == null) {
@@ -163,7 +168,43 @@ app.get('/tweets/:id', (req, res) => {
 });
 
 app.get('/tweets/recent', (req, res) => {
-    // gets _____ most recent tweets, probably? depends on body fields
+    // sends out array of (limit) most recent Tweet objects in descending order of posting, can skip any number of more recent tweets
+    let skip = req.body.skip;
+    let limit = req.body.limit;
+    if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
+    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
+    if (limit < 1 || limit > 75) {
+        res.status(400).send("400 bad request: tweet limit out of bounds.");
+        return;
+    }
+    let current = Tweet.nextId -1 - skip;
+    if (current < 0) {
+        res.status(400).send("400 bad request: skipped all tweets");
+        return;
+    }
+    let last = current - limit;
+    if (last < 0) {last = 0;}
+    let arr = [];
+    while (limit > 0) {
+        let t = Tweet.findById(current);
+        if (!t.isDeleted && !(t == {})) {
+            // generate the usertweet object for current
+            t = Tweet.generateView(t.id);
+            if (req.session.user = t.userId) { t.isMine = true; }
+            let likedTweets = User.findById(req.session.user).likedTweets;
+            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
+            arr.push(t);
+            limit -= 1;
+        }
+        current -= 1;
+        if (current < 0) {break;}
+    }
+    res.json(arr);
+    return;
+})
+
+app.get('/tweets/author/:userId', (req, res) => {
+    // gets tweets by author userId
 })
 
 app.get('/tweets', (req, res) => {
@@ -198,6 +239,7 @@ app.post('/tweets', (req, res) => {
     if (type == "retweet") {
         Tweet.retweetCountIncrement(parentId);
     }
+    User.postTweet(userId, t.id);
     return res.json(t);
 });
 
@@ -267,7 +309,8 @@ app.delete('/tweets/:id', (req, res) => {
     }
     if (req.session.user == t.userId || req.session.user.type == "admin"){
         if (t.isDeleted) {res.status(400).send("400 bad request: tweet already deleted.")}
-        t.delete();
+        User.deleteTweet(t.userId, t.id);
+        Tweet.delete(t.id);
         res.json(true);
         return;
     }

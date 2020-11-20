@@ -9,6 +9,7 @@ class User {
     this.profileDescription = profileDescription;
     this.type = type;
     this.likedTweets = [];
+    this.postedTweets = [];
     };
 }
 
@@ -117,5 +118,23 @@ User.likeTweet = (userId, tweetId) => {
     }
 }
 
+User.postTweet = (userId, tweetId) => {
+    let u = User.findById(userId);
+    if (u == {}) {return;}
+    u.postedTweets.push(tweetId.toString());
+    userData.set(userId, u);
+}
+
+User.deleteTweet = (userId, tweetId) => {
+    let u = User.findById(userId);
+    if (u == {}) {return;}
+    if (u.postedTweets.includes(tweetId.toString())) {
+        const index = u.postedTweets.indexOf(tweetId.toString());
+        if (index > -1) {
+            u.postedTweets.splice(index, 1);
+        }
+        userData.set(userId, u);
+    }
+}
 
 module.exports = User;
