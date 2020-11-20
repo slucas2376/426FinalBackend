@@ -10,6 +10,7 @@ class User {
     this.type = type;
     this.likedTweets = [];
     this.postedTweets = [];
+    // this.hasRetweeted = [];
     };
 }
 
@@ -48,7 +49,12 @@ User.makeView = (userObj) => {
     let viewAvatar = userObj.avatar;
     let viewDescription = userObj.profileDescription;
     let viewType = userObj.type;
-    return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, profileDescription: viewDescription, type: viewType}
+    let viewPosted = userObj.tweetsPosted;
+    let viewLiked = userObj.tweetsLiked;
+    // let viewRetweeted = userObj.hasRetweeted;
+    return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, profileDescription: viewDescription,
+        type: viewType, tweetsLiked: viewLiked, tweetsPosted: viewPosted, // hasRetweeted: viewRetweeted
+    }
 }
 
 User.findById = (id) => {
@@ -122,6 +128,7 @@ User.postTweet = (userId, tweetId) => {
     let u = User.findById(userId);
     if (u == {}) {return;}
     u.postedTweets.push(tweetId.toString());
+    // u.hasRetweeted.push(tweetId.toString());
     userData.set(userId, u);
 }
 

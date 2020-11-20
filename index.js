@@ -85,6 +85,10 @@ app.get('/users', (req, res) => {
         return;*/
 })
 
+app.get('/users/current', (req, res) => {
+    res.json(User.makeView(User.findById(req.session.user)))
+})
+
 app.get('/users/:id', (req, res) => {
     // sends JSON object User for the relevant id, will only include password field if logged in as that user or account type admin
     let u = User.findById(req.params.id);
@@ -163,6 +167,10 @@ app.get('/tweet/:id', (req, res) => {
         return;
     }
     if (t.isDeleted) {res.json("Tweet has been deleted."); return;}
+    t = Tweet.generateView(t.id);
+    if (req.session.user = t.userId) { t.isMine = true; }
+    let likedTweets = User.findById(req.session.user).likedTweets;
+    if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
     res.json(t);
     return;
 });
@@ -203,8 +211,48 @@ app.get('/tweets/recent', (req, res) => {
     return;
 })
 
-app.get('/tweets/author/:userId', (req, res) => {
-    // gets tweets by author userId
+app.get('/tweets/user/:userId', (req, res) => {
+    // sends out array of tweets, all by author :userId, in descending order of posting or liking
+    let skip = req.body.skip;
+    let limit = req.body.limit;
+    let likedOrPosted = req.body.likedOrPosted;
+    if (likedOrPosted != "liked" && likedOrPosted != "posted") {res.status(400).send("400 bad request: invalid filter criterion")};
+    if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
+    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
+    if (limit < 1 || limit > 75) {
+        res.status(400).send("400 bad request: tweet limit out of bounds.");
+        return;
+    }
+    let user = User.findById(req.params.userId);
+    if (user == {}) {res.status(404).send("404: user not found")};
+    let readArr = [];
+    if (likedOrPosted == "liked") { readArr = user.likedTweets.map(e => e)};
+    if (likedOrPosted == "posted") {readArr = user.postedTweets.map(e => e)}
+    if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
+    let current = readArr.length - 1 - skip;
+    if (current < 0) {
+        res.status(400).send("400 bad request: skipped all tweets");
+        return;
+    }
+    let last = current - limit;
+    if (last < 0) {last = 0;}
+    let arr = [];
+    while (limit > 0) {
+        let t = Tweet.findById(readArr[current]);
+        if (!t.isDeleted && !(t == {})) {
+            // generate the usertweet object for current
+            t = Tweet.generateView(t.id);
+            if (req.session.user = t.userId) { t.isMine = true; }
+            let likedTweets = User.findById(req.session.user).likedTweets;
+            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
+            arr.push(t);
+            limit -= 1;
+        }
+        current -= 1;
+        if (current < 0) {break;}
+    }
+    res.json(arr);
+    return;
 })
 
 app.get('/tweets', (req, res) => {

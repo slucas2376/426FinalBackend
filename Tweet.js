@@ -16,7 +16,7 @@ class Tweet {
     likeCount = 0;
     replyCount = 0;
     retweetCount = 0;
-    replyIds = [];
+    // replyIds = [];
 
     edit() {
         this.isEdited = true;
