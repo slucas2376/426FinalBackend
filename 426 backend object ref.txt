@@ -1,0 +1,31 @@
+A Tweet object as fetched by the API command to get a single tweet will have the following fields:
+
+id: A string containing the tweet's numerical ID. This is also the name of the tweet object.
+userId: A string containing the user account ID of the tweet's poster.
+type: A string containing the tweet's type (tweet, retweet, or reply).
+body: A string containing the text body of the tweet.
+parentId: A string containing the tweet numerical ID of the tweet's parent, for retweets and replies, or "no parent" for tweets.
+createdAt: A Javascript Date object containing the date and time of the tweet's creation.
+isDeleted: A boolean value that is always false for tweets that have not been deleted.
+isEdited: A boolean value that is false if the tweet has not been edited, and true if it has been edited.
+editedAt: A Javascript Date object containing the date and time of the tweet's edit.
+likeCount: A number containing the number of likes on the tweet.
+replyCount: A number containing the number of replies on the tweet.
+retweetCount: A number containing the number of retweets on the tweet.
+isMine: A boolean that is true if the currently logged-in user posted the tweet and is false otherwise.
+isLiked: A boolean that is true if the currently logged-in user liked the tweet and is false otherwise.
+
+NOT YET IMPLEMENTED/EXPERIMENTAL:
+replyIds: An array of strings containing the numerical IDs of tweets replying to this tweet.
+
+
+A User object will have the following fields:
+
+id: A string containing the user's login name/account name. This is also the name of the User object. Maximum length 16 characters.
+displayName: A string containing the user's display name. Maximum length 32 characters.
+password: A string containing the user's password. Maximum length 24 characters. Is only shown to that user when logged in, or to admin accounts viewing the user.
+avatar: A string containing a link to the user's avatar. Maximum length 120 characters.
+profileDescription: A string containing the user's profile description.
+type: A string containing the user's account type, either user or admin.
+likedTweets: An array containing string IDs of the tweets liked by the user.
+postedTweets: An array containing string IDs of the tweets posted by the user.
