@@ -9,14 +9,16 @@ createdAt: A Javascript Date object containing the date and time of the tweet's 
 isDeleted: A boolean value that is always false for tweets that have not been deleted.
 isEdited: A boolean value that is false if the tweet has not been edited, and true if it has been edited.
 editedAt: A Javascript Date object containing the date and time of the tweet's edit.
+mediaType: A string containing the type of media embedded in the tweet. Options are "video", "image", and "none".
+videoId: A string containing the 11-character video ID for a YouTube video.
+imageLink: A string containing a direct image link.
 likeCount: A number containing the number of likes on the tweet.
 replyCount: A number containing the number of replies on the tweet.
 retweetCount: A number containing the number of retweets on the tweet.
+replyIds: An array containing string IDs of Tweets replying to this one.
 isMine: A boolean that is true if the currently logged-in user posted the tweet and is false otherwise.
 isLiked: A boolean that is true if the currently logged-in user liked the tweet and is false otherwise.
 
-NOT YET IMPLEMENTED/EXPERIMENTAL:
-replyIds: An array of strings containing the numerical IDs of tweets replying to this tweet.
 
 
 A User object will have the following fields:

@@ -10,7 +10,7 @@ class User {
     this.type = type;
     this.likedTweets = [];
     this.postedTweets = [];
-    // this.hasRetweeted = [];
+    this.hasRetweeted = [];
     };
 }
 
@@ -31,13 +31,19 @@ User.update = (id, displayName, password, avatar, profileDescription) => {
     let old = User.findById(id);
     if (old == {}) {return;}
     let oldLikes = old.likedTweets;
+    let oldPosts = old.postedTweets;
+    let oldRetweets = old.hasRetweeted;
     if (old.type == "admin") {
         let a = new User(id, displayName, password, avatar, profileDescription, "admin")
         a.likedTweets = oldLikes;
+        a.postedTweets = oldPosts;
+        a.hasRetweeted = oldRetweets;
         userData.set(id, a);
     } else {
         let u = new User(id, displayName, password, avatar, profileDescription)
         u.likedTweets = oldLikes;
+        u.postedTweets = oldPosts;
+        u.hasRetweeted = oldRetweets;
         userData.set(id, u);
     };
 }
@@ -128,8 +134,15 @@ User.postTweet = (userId, tweetId) => {
     let u = User.findById(userId);
     if (u == {}) {return;}
     u.postedTweets.push(tweetId.toString());
-    // u.hasRetweeted.push(tweetId.toString());
     userData.set(userId, u);
+}
+
+User.retweet = (userId, tweetId) => {
+    let u = User.findById(userId);
+    if (u == {}) {
+        return;
+    }
+    u.hasRetweeted.push(tweetId.toString());userData.set(userId, u);
 }
 
 User.deleteTweet = (userId, tweetId) => {

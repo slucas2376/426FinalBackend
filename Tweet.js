@@ -2,21 +2,34 @@ const User = require("./User");
 const tweetData = require('data-store')({path: process.cwd() + '/data/tweets.json'});
 
 class Tweet {
-    constructor(id, userId, type, body, parentId)
+    constructor(id, userId, type, body, parentId, mediaType, mediaId)
     {this.id = id;
         this.userId = userId;
         this.type = type;
         this.body = body;
         this.parentId = parentId;
         this.createdAt = new Date();
-        this.isDeleted = false;}
-    // add other properties, incl default vals; are we adding media links? I don't want to have a cdn so no uploading of our own content
+        this.isDeleted = false;
+        this.mediaType = mediaType;
+        this.videoId = "";
+        this.imageLink = "";
+        if (mediaType == "video") {
+            if (mediaId.indexOf("http://www.youtube.com/embed/" == 0)) {this.videoId = mediaId.slice(29, 40)}
+            else if (mediaId.indexOf("https://www.youtube.com/embed/" == 0)) {this.videoId = mediaId.slice(30, 41)}
+            else if (mediaId.length == 11) {this.videoId = mediaId}
+            else {this.videoId = ""};
+        } else {this.videoId = "";}
+        if (mediaType == "image") {
+            this.imageLink = mediaId;
+        }
+        }
     isEdited = false;
     editedAt = null;
     likeCount = 0;
     replyCount = 0;
     retweetCount = 0;
-    // replyIds = [];
+    replyIds = [];
+    ;
 
     edit() {
         this.isEdited = true;
@@ -40,13 +53,12 @@ Tweet.getAllIdsForAuthor = (userId) => {
 }
 
 Tweet.findById = (id) => {
+    // returns a tweet with the given id; if no such tweet exists, returns an empty object
     let t = tweetData.get(id.toString());
     if (t != null && t != undefined) {
-        // old code; generally I can sanitize the constructor or sanitize this and I choose to sanitize the constructor
-        // return new Tweet(t.id, t.userId, t.type, t.body, t.parentId);
         return t;
     }
-    return null;
+    return {};
 }
 
 Tweet.generateView = (tweetId) => {
@@ -68,10 +80,10 @@ Tweet.nextId = Tweet.getAllIds().reduce((max, nextId) => {
     return max;
 }, -1) + 1;
 
-Tweet.create = (userId, type, body, parentId = 'no parent') => {
+Tweet.create = (userId, type, body, parentId = 'no parent', mediaType = 'none', mediaId = "") => {
     let newId = Tweet.nextId;
     Tweet.nextId += 1;
-    let t = new Tweet(newId, userId, type, body, parentId)
+    let t = new Tweet(newId, userId, type, body, parentId, mediaType, mediaId)
     tweetData.set(t.id.toString(), t);
     return t;
 }
@@ -120,10 +132,16 @@ Tweet.isLiked = (userId, tweetId) => {
     return false;
 }
 
+Tweet.reply  = (replyId, parentId) => {
+    let p = Tweet.findById(parentId);
+    if (p == {}) {return;}
+    p.replyIds.push(replyId);
+    tweetData.set(parentId, p);
+}
+
 Tweet.delete = (id) => {
-    // replaces Tweet object with a version of itself containing only an id field containing its id and an isDeleted field set to true
-    t = Tweet.findById(id.toString());
-    tweetData.set(id.toString(), {id: id.toString(), isDeleted: true});
+    // replaces Tweet object with a version of itself containing only an id field containing its id, an isDeleted field set to true, and a body set to "Tweet deleted."
+    tweetData.set(id.toString(), {id: id.toString(), isDeleted: true, body: "Tweet deleted."});
 }
 
 module.exports = Tweet;

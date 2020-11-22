@@ -212,11 +212,11 @@ app.get('/tweets/recent', (req, res) => {
 })
 
 app.get('/tweets/user/:userId', (req, res) => {
-    // sends out array of tweets, all by author :userId, in descending order of posting or liking
+    // sends out array of tweets, all by author :userId, in descending order of posting, liking, or retweeting
     let skip = req.body.skip;
     let limit = req.body.limit;
-    let likedOrPosted = req.body.likedOrPosted;
-    if (likedOrPosted != "liked" && likedOrPosted != "posted") {res.status(400).send("400 bad request: invalid filter criterion")};
+    let findType = req.body.findType;
+    if (findType != "like" && findType != "post" && findType != "retweet") {res.status(400).send("400 bad request: invalid filter criterion")};
     if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
     if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
     if (limit < 1 || limit > 75) {
@@ -226,8 +226,9 @@ app.get('/tweets/user/:userId', (req, res) => {
     let user = User.findById(req.params.userId);
     if (user == {}) {res.status(404).send("404: user not found")};
     let readArr = [];
-    if (likedOrPosted == "liked") { readArr = user.likedTweets.map(e => e)};
-    if (likedOrPosted == "posted") {readArr = user.postedTweets.map(e => e)}
+    if (findType == "like") { readArr = user.likedTweets.map(e => e) };
+    if (findType == "post") { readArr = user.postedTweets.map(e => e) };
+    if (findType == "retweet") { readArr = user.hasRetweeted.map(e => e) };
     if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
     let current = readArr.length - 1 - skip;
     if (current < 0) {
@@ -255,9 +256,49 @@ app.get('/tweets/user/:userId', (req, res) => {
     return;
 })
 
-app.get('/tweets', (req, res) => {
-    // sends out a filtered array of some sort probably;
-    // arr = something.
+app.get('/tweets/:id/replies', (req, res) => {
+    // sends array of tweets that are replies to tweet :id, least recent first
+    let skip = req.body.skip;
+    let limit = req.body.limit;
+    if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
+    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
+    if (limit < 1 || limit > 75) {
+        res.status(400).send("400 bad request: tweet limit out of bounds.");
+        return;
+    }
+    let parent = Tweet.findById(req.params.id);
+    if (parent == {}) {
+        res.status(404).send("404: tweet not found");
+        return;};
+    let readArr = parent.replyIds.map(e => e);
+    if (readArr.length == 0) {
+        res.status(404).send("404: tweet has no replies.");
+        return;}
+    let current = 0 + skip;
+    if (current > readArr.length) {
+        res.status(400).send("400 bad request: skipped all tweets.");
+        return;
+    }
+    let last = current + limit;
+    if (last >= readArr.length) {last = readArr.length - 1;}
+    let arr = [];
+    while (current <= last) {
+        let t = Tweet.findById(readArr[current]);
+        if (!t.isDeleted && !(t == {})) {
+            // generate the usertweet object for current
+            t = Tweet.generateView(t.id);
+            if (req.session.user = t.userId) { t.isMine = true; }
+            let likedTweets = User.findById(req.session.user).likedTweets;
+            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
+            arr.push(t);
+            limit -=1;
+        }
+        current += 1;
+        if (current > last) {break;}
+        if (limit <= 0) {break;}
+    }
+    res.json(arr);
+    return;
 })
 
 app.post('/tweets', (req, res) => {
@@ -270,6 +311,11 @@ app.post('/tweets', (req, res) => {
     let type = req.body.type;
     let body = req.body.body;
     let parentId = 'no parent'
+    let mediaType = "none";
+    if (req.body.mediaType == "image") {mediaType = "image";};
+    if (req.body.mediaType == "video") {mediaType = "video";};
+    let mediaId = "";
+    if (mediaType == "video" || mediaType == "image") {mediaId = req.body.mediaId;};
     // body length verification
     if (body.length > 280) {res.status(400).send("400: tweet is too long")};
     if (type != "retweet" && body.length == 0) {res.status(400).send("400: tweets and replies must have a body")};
@@ -277,15 +323,17 @@ app.post('/tweets', (req, res) => {
     if (type != "tweet" && type != "retweet" && type != "reply") {res.status(400).send("400: invalid tweet type")}
     // if tweet is reply or retweet, set proper parent ID
     if (!(type == "tweet")) {parentId = req.body.parentId}
-    let t = Tweet.create(userId, type, body, parentId);
+    let t = Tweet.create(userId, type, body, parentId, mediaType, mediaId);
     // if (t == null) {res.status(400).send("400: Bad Request")}
     // if tweet is reply, increment parent's replyCount
     if (type == "reply") {
         Tweet.replyCountIncrement(parentId);
+        Tweet.reply(t.id, parentId)
     }
     // if tweet is retweet, increment parent's retweetCount
     if (type == "retweet") {
         Tweet.retweetCountIncrement(parentId);
+        User.retweet(userId, parentId);
     }
     User.postTweet(userId, t.id);
     return res.json(t);
@@ -334,12 +382,26 @@ app.put('/tweets/:id', (req, res) => {
         return;
     }
     if (req.session.user == t.userId || req.session.user.type == "admin"){
-        if (t == null || t == undefined || t.isDeleted) {
+        if (t == null || t == undefined || t.isDeleted || t == {}) {
             res.status(404).send("404: Tweet could not be found.");
             return;
         }
-        // if we're allowing attachment of media, here is where that's edited too
-        let body = req.body.body;
+        let body = t.body;
+        if (req.body.body != "") {body = req.body.body;};
+        let mediaType = "";
+        if (req.body.mediaType != "") {mediaType = req.body.mediaType;};
+        let mediaId = "";
+        if (req.body.mediaId != "") {mediaId = req.body.mediaId;};
+        if (body.length > 280) {res.status(400).send("400 bad request: tweet body too long"); return;}
+        if (t.type == "tweet" || t.type == "reply") {if (body.length == 0) {res.status(400).send("400 bad request: tweet body too short"); return;}}
+        if (mediaType == "video" && mediaId != "") {
+            if (mediaId.indexOf("http://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(29, 40)}
+            else if (mediaId.indexOf("https://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(30, 41)}
+            else if (mediaId.length == 11) {t.videoId = mediaId}
+            if (t.videoId != "") {t.mediaType = "video"}
+        }
+        if (mediaType == "image" && mediaId != "") {t.mediaType = "image"; t.imageLink = mediaId;}
+        if (mediaType == "none") {t.mediaType = "none"; t.videoId = ""; t.imageLink = "";}
         t.body = body;
         t.edit();
         res.json(t);
@@ -351,7 +413,7 @@ app.put('/tweets/:id', (req, res) => {
 app.delete('/tweets/:id', (req, res) => {
     // deleting tweets; only available for user who posted tweet or admins
     let t = Tweet.findById(req.params.id);
-    if (t == null || t == undefined) {
+    if (t == null || t == undefined || t == {}) {
         res.status(404).send("404: Tweet could not be found.");
         return;
     }
@@ -366,10 +428,9 @@ app.delete('/tweets/:id', (req, res) => {
 })
 
 
-// port will probably come from heroku; look at tutorials for that!
 const port = 3030;
 app.listen(port, () => {
     console.log('server running on port ' + port);
-/*    User.createAdmin("sclu", "Dev Sophie", "426final", "a picture of edelgard probably");
-    User.create("test", "test account", "test")*/
+    //User.createAdmin("sclu", "Dev Sophie", "426final", "https://imgur.com/572zTSG.jpg", "mood: aaaaaaaaaaaaaaa");
+    //User.create("test", "test account", "test", "test avatar", "test desc");
 })

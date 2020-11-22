@@ -1,0 +1,24 @@
+{
+  "sclu": {
+    "id": "sclu",
+    "displayName": "Dev Sophie",
+    "password": "426final",
+    "avatar": "https://imgur.com/572zTSG.jpg",
+    "profileDescription": "Your description goes here.",
+    "type": "admin",
+    "likedTweets": [],
+    "postedTweets": [],
+    "hasRetweeted": []
+  },
+  "test": {
+    "id": "test",
+    "displayName": "test account",
+    "password": "test",
+    "avatar": "test avatar",
+    "profileDescription": "test desc",
+    "type": "user",
+    "likedTweets": [],
+    "postedTweets": [],
+    "hasRetweeted": []
+  }
+}
