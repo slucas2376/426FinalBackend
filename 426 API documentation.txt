@@ -22,7 +22,6 @@ body:
 
 Post requests to [domain]/tweets with body below will add a new tweet with the appropriate properties and return a full JSON tweet object.
 body:
-		userId: A string containing the account ID/login name of the tweet's author.
 		type: A string containing the tweet's type. valid types are "tweet", "retweet", and "reply"
 		body: A string containing the tweet's text body. Replies and tweets have a minimum length of 1, retweets have a minimum length of 0. All types have a maximum length of 280.
 		(optional) parentId: An int containing the ID of the parent tweet. Only include if type is a retweet or reply.
