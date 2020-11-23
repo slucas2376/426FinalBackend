@@ -25,7 +25,8 @@ app.use(expressSession({
     saveUninitialized: false,
     proxy: true,
     cookie: {sameSite: "none",
-        secure: true
+        secure: true,
+        maxAge: 5184000000
     }
 
 }));
