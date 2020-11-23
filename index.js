@@ -20,7 +20,11 @@ app.use(expressSession({
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
     saveUninitialized: false,
-    sameSite: "none"
+    cookie: {sameSite: "none",
+        secure: true,
+        proxy: true
+    }
+
 }));
 
 // login/user database interaction API
