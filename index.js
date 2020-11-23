@@ -4,7 +4,10 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 
 const Tweet = require('./Tweet.js');
 
@@ -60,7 +63,6 @@ app.post('/register', (req, res) => {
     // takes fields of (str) userId, (str) displayName, (str) password, (str image link) avatar (avatar is optional and defaults to whatever link we find for default)
     // sends back true on successful registration
     let userId = req.body.userId;
-    if (User.findById(userId).id == userId) { res.status(400).send("400 bad request: user already exists") };
     let displayName = req.body.displayName;
     let password = req.body.password;
     let avatar = req.body.avatar;
@@ -68,6 +70,7 @@ app.post('/register', (req, res) => {
         res.status(400).send("400 bad request: parameter too short");
         return;
     }
+    if (User.findById(userId).id == userId) { res.status(400).send("400 bad request: user already exists") };
     if (userId.length > 16 || displayName.length > 32 || password.length > 24 || avatar.length > 120) {
         res.status(400).send("400 bad request: parameter too long");
         return;
