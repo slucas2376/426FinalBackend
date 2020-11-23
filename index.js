@@ -27,7 +27,7 @@ app.use(expressSession({
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
     saveUninitialized: false,
-    // proxy: true,
+    proxy: true,
     cookie: {sameSite: "none", // comment out for local testing
         secure: true, // false for local testing
         maxAge: 5184000000
