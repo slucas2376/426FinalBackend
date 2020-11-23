@@ -19,7 +19,8 @@ app.use(expressSession({
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    sameSite: "none"
 }));
 
 // login/user database interaction API
