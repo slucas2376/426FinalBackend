@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: '174.111.45.28',
     credentials: true
 }));
 
@@ -71,7 +71,7 @@ app.post('/register', (req, res) => {
         return;
     }
     if (User.findById(userId).id == userId) { res.status(400).send("400 bad request: user already exists") };
-    if (userId.length > 16 || displayName.length > 32 || password.length > 24 || avatar.length > 120) {
+    if (userId.length > 16 || displayName.length > 32 || password.length > 24 || avatar.length > 300) {
         res.status(400).send("400 bad request: parameter too long");
         return;
     }
