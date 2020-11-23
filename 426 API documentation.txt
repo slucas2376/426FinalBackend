@@ -100,7 +100,7 @@ body: N/A
 
 
 
-Get requests to [domain]/users/idnames will send back a JSON array containing an object for each user. These objects have a userId field and a displayName field.
+Get requests to [domain]/users/idnames/:parameter will send back a JSON array containing an object for each user whose userId or displayName contains :parameter. These objects have a userId field and a displayName field.
 body: N/A
 
 

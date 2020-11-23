@@ -79,9 +79,19 @@ app.post('/register', (req, res) => {
     res.json(true);
 })
 
-app.get('/users/idnames', (req, res) => {
+app.get('/users/idnames/:parameter', (req, res) => {
     // sends array of JSON objects containing a userId field and a displayName field, for all registered users
-    res.json(User.getAllIdNamePairs());
+    let pairs = User.getAllIdNamePairs();
+    let arr = []
+    for (u of pairs) {
+        if (u.userId.includes(req.params.parameter)) {
+            arr.push(u);
+        } else if (u.displayName.includes(req.params.parameter)) {
+            arr.push(u);
+        }
+    }
+    //res.json(pairs.map(e => e.userId));
+    res.json(arr);
     return;
 })
 
