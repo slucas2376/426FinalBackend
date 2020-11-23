@@ -4,8 +4,11 @@ const cors = require('cors');
 
 const app = express();
 
+// let corsOrigin = "http://localhost:3000";
+let corsOrigin = "http://18.223.149.123:3030"
+
 app.use(cors({
-    origin: '174.111.45.28',
+    origin: corsOrigin,
     credentials: true
 }));
 
@@ -23,9 +26,9 @@ app.use(expressSession({
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
     saveUninitialized: false,
-    proxy: true,
-    cookie: {sameSite: "none",
-        secure: true,
+    // proxy: true,
+    cookie: {sameSite: "none", // comment out for local testing
+        secure: true, // false for local testing
         maxAge: 5184000000
     }
 
@@ -37,11 +40,11 @@ app.post('/login', (req, res) => {
     // lmao what's an """encryption""", seriously don't use passwords you care about here
     // maybe add logic to check if a user is already logged in, then send 400 already logged in?
     let userId = req.body.userId;
-    if (userId == "") {res.status(400).send("400 bad request: invalid username")}
+    if (userId == "") {res.status(400).send("400 bad request: invalid username"); return;}
     let password = req.body.password;
-    if (password == "") {res.status(400).send("400 bad request: invalid password")}
+    if (password == "") {res.status(400).send("400 bad request: invalid password"); return;}
     let loginData = userData.get(userId);
-    if (loginData == null || loginData == undefined) {
+    if (loginData == null || loginData == undefined || loginData == {}) {
         res.status(404).send("404: user not found");
         return;
     }
@@ -109,7 +112,8 @@ app.get('/users', (req, res) => {
 })
 
 app.get('/users/current', (req, res) => {
-    res.json(User.makeView(User.findById(req.session.user)))
+    let u = User.makeView(User.findById(req.session.user));
+    res.json(u);
 })
 
 app.get('/users/:id', (req, res) => {
@@ -142,7 +146,7 @@ app.put('/users/:id/', (req, res) => {
         if (password.length == 0) {password = targetUser.password};
         if (avatar.length == 0) {avatar = targetUser.avatar};
         if (desc.length == 0) {desc = targetUser.profileDescription}
-        if (displayName.length > 32 || password.length > 24 || avatar.length > 120) {
+        if (displayName.length > 32 || password.length > 24 || avatar.length > 300) {
             res.status(400).send("400 bad request: parameter too long");
             return;
         }
@@ -170,7 +174,7 @@ app.delete('/users/:id', (req, res) => {
         res.status(400).send("400 bad request: user could not be deleted");
         return;
     }
-    if ((currUser == undefined) || (currUser == null)) { res.status(404).send("404: no user found")};
+    if ((currUser == undefined) || (currUser == null)) { res.status(404).send("404: no user found"); return;};
     res.status(403).send("403 forbidden");
 
 })
@@ -239,7 +243,7 @@ app.get('/tweets/user/:userId', (req, res) => {
     let skip = req.body.skip;
     let limit = req.body.limit;
     let findType = req.body.findType;
-    if (findType != "like" && findType != "post" && findType != "retweet") {res.status(400).send("400 bad request: invalid filter criterion")};
+    if (findType != "like" && findType != "post" && findType != "retweet") {res.status(400).send("400 bad request: invalid filter criterion"); return;};
     if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
     if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
     if (limit < 1 || limit > 75) {
@@ -247,7 +251,7 @@ app.get('/tweets/user/:userId', (req, res) => {
         return;
     }
     let user = User.findById(req.params.userId);
-    if (user == {}) {res.status(404).send("404: user not found")};
+    if (user == {}) {res.status(404).send("404: user not found"); return;};
     let readArr = [];
     if (findType == "like") { readArr = user.likedTweets.map(e => e) };
     if (findType == "post") { readArr = user.postedTweets.map(e => e) };
@@ -340,10 +344,10 @@ app.post('/tweets', (req, res) => {
     let mediaId = "";
     if (mediaType == "video" || mediaType == "image") {mediaId = req.body.mediaId;};
     // body length verification
-    if (body.length > 280) {res.status(400).send("400: tweet is too long")};
-    if (type != "retweet" && body.length == 0) {res.status(400).send("400: tweets and replies must have a body")};
+    if (body.length > 280) {res.status(400).send("400: tweet is too long"); return;};
+    if (type != "retweet" && body.length == 0) {res.status(400).send("400: tweets and replies must have a body"); return;};
     // type verification
-    if (type != "tweet" && type != "retweet" && type != "reply") {res.status(400).send("400: invalid tweet type")}
+    if (type != "tweet" && type != "retweet" && type != "reply") {res.status(400).send("400: invalid tweet type"); return;}
     // if tweet is reply or retweet, set proper parent ID
     if (!(type == "tweet")) {parentId = req.body.parentId}
     let t = Tweet.create(userId, type, body, parentId, mediaType, mediaId);
