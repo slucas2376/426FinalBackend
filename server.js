@@ -213,23 +213,14 @@ app.get('/tweet/:id', (req, res) => {
 });
 
 app.get('/tweets/recent', (req, res) => {
-    // sends out array of (limit) most recent Tweet objects in descending order of posting, can skip any number of more recent tweets
-    let skip = req.body.skip;
+    // sends out array of (limit) most recent Tweet objects in descending order of posting
     let limit = req.body.limit;
     if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
-    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
     if (limit < 1 || limit > 75) {
         res.status(400).send("400 bad request: tweet limit out of bounds.");
         return;
     }
-    let current = Tweet.nextId - 1 - skip;
-    console.log(Tweet.nextId);
-    console.log(skip);
-    console.log(current);
-    if (current < 0) {
-        res.status(400).send("400 bad request: skipped all tweets");
-        return;
-    }
+    let current = Tweet.nextId - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
     let arr = [];
@@ -249,18 +240,15 @@ app.get('/tweets/recent', (req, res) => {
         if (current < 0) {break;}
     }
     res.json(arr);
-    console.log(arr);
     return;
 })
 
 app.get('/tweets/user/:userId', (req, res) => {
     // sends out array of tweets, all by author :userId, in descending order of posting, liking, or retweeting
-    let skip = req.body.skip;
     let limit = req.body.limit;
     let findType = req.body.findType;
     if (findType != "like" && findType != "post" && findType != "retweet") {res.status(400).send("400 bad request: invalid filter criterion"); return;};
     if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
-    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
     if (limit < 1 || limit > 75) {
         res.status(400).send("400 bad request: tweet limit out of bounds.");
         return;
@@ -272,11 +260,7 @@ app.get('/tweets/user/:userId', (req, res) => {
     if (findType == "post") { readArr = user.postedTweets.map(e => e) };
     if (findType == "retweet") { readArr = user.hasRetweeted.map(e => e) };
     if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
-    let current = readArr.length - 1 - skip;
-    if (current < 0) {
-        res.status(400).send("400 bad request: skipped all tweets");
-        return;
-    }
+    let current = readArr.length - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
     let arr = [];
@@ -300,10 +284,8 @@ app.get('/tweets/user/:userId', (req, res) => {
 
 app.get('/tweets/:id/replies', (req, res) => {
     // sends array of tweets that are replies to tweet :id, least recent first
-    let skip = req.body.skip;
     let limit = req.body.limit;
     if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
-    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
     if (limit < 1 || limit > 75) {
         res.status(400).send("400 bad request: tweet limit out of bounds.");
         return;
@@ -316,11 +298,7 @@ app.get('/tweets/:id/replies', (req, res) => {
     if (readArr.length == 0) {
         res.status(404).send("404: tweet has no replies.");
         return;}
-    let current = 0 + skip;
-    if (current > readArr.length) {
-        res.status(400).send("400 bad request: skipped all tweets.");
-        return;
-    }
+    let current = 0;
     let last = current + limit;
     if (last >= readArr.length) {last = readArr.length - 1;}
     let arr = [];

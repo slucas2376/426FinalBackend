@@ -7,17 +7,15 @@ body: N/A
 
 
 
-Get requests to [domain]/tweets/recent will return a JSON object array of the specified number of tweets in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted. Trying to skip enough tweets that the array fills starting from an index lower than 0 will give an error.
+Get requests to [domain]/tweets/recent will return a JSON object array of the specified number of tweets in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted.
 body:
 		limit: A string containing a number between 1 and 75 that is the maximum number of tweets in the array. If this field is left as an empty string it will default to 50.
-		skip: A string containing a number that signifies how many of the most recent tweets to skip over before starting to fill the array. If this field is left as an empty string it will default to 0.
 
 
 
 Get requests to [domain]/tweets/user/:userId will return a JSON object array of the specified number of tweets in descending order of posting (most recent first), that the user with ID :userId has either posted or liked.
 body:
 		limit: A string containing a number between 1 and 75 that is the maximum number of tweets in the array. If this field is left as an empty string it will default to 50.
-		skip: A string containing a number that signifies how many of the most recent tweets that fulfill the other criteria to skip over before starting to fill the array. If this field is left as an empty string it will default to 0.
 		findType: A string containing the type of tweet by the user to get. Options are "like", for tweets liked by the user, "post", for tweets posted by the user, and "retweet", for tweets retweeted by the user. Note that "retweet" does not get the user's retweets, but the actual parent tweet.
 
 
@@ -25,7 +23,6 @@ body:
 Get requests to [domain]/tweets/:id/replies will return a JSON object array of the specified number of tweets in ascending order of posting (least recent first), that are replies to the tweet with ID :id.
 body:
 		limit: A string containing a number between 1 and 75 that is the maximum number of tweets in the array. If this field is left as an empty string it will default to 50.
-		skip: A string containing a number that signifies how many replies to skip over before starting to fill the array. If this field is left as an empty string it will default to 0.
 
 
 
