@@ -7,7 +7,7 @@ const app = express();
 // let corsOrigin = "http://localhost:3000";
 // let corsOrigin = "174.111.45.28"  // owen
 // let corsOrigin = "http://24.106.176.98" // raj
-let corsOrigin = "http://rajgandecha.github.io/426Final";
+let corsOrigin = "https://pedantic-lichterman-ee0404.netlify.app";
 
 app.use(cors({
     origin: corsOrigin,
