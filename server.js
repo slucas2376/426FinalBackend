@@ -239,6 +239,7 @@ app.get('/tweets/recent', (req, res) => {
         current -= 1;
         if (current < 0) {break;}
     }
+    console.log(arr);
     res.json(arr);
     return;
 })
