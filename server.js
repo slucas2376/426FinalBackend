@@ -220,6 +220,9 @@ app.get('/tweets/recent', (req, res) => {
         res.status(400).send("400 bad request: tweet limit out of bounds.");
         return;
     }
+    console.log(limit);
+    console.log(typeof(limit));
+    
     let current = Tweet.nextId - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
