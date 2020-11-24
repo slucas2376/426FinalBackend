@@ -110,6 +110,7 @@ app.post('/register', (req, res) => {
         return;
     }
     let u = User.create(userId, displayName, password, avatar);
+    console.log("new user created:" + u.userId);
     res.json(true);
     return;
 })
