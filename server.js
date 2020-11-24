@@ -60,8 +60,11 @@ app.post('/login', (req, res) => {
     }
     if (loginData.password == password) {
         // successful login
+        console.log("pre-delete " + req.session.user);
         delete req.session.user;
+        console.log("post-delete " + req.session.user);
         req.session.user = userId;
+        console.log("after-set " + req.session.user);
         res.json(true);
         return;
     }
