@@ -144,7 +144,7 @@ app.get('/users', (req, res) => {
 
 app.get('/users/current', (req, res) => {
 
-    let user = req.session.cookie.user;
+    let user = req.session.user;
     console.log(user);
     let u = User.findById(user);
     console.log(u);
