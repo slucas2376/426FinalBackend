@@ -5,19 +5,14 @@ const cors = require('cors');
 const app = express();
 
 // let corsOrigin = "http://localhost:3000";
-// owen let corsOrigin = "174.111.45.28"
-let corsOrigin = "http://24.106.176.98" // raj
+// let corsOrigin = "174.111.45.28"  // owen
+// let corsOrigin = "http://24.106.176.98" // raj
+let corsOrigin = "*";
 
 app.use(cors({
     origin: corsOrigin,
     credentials: true
 }));
-
-app.all('/register', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next()
-});
 
 const Tweet = require('./Tweet.js');
 
