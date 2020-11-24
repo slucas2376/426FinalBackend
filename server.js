@@ -60,6 +60,7 @@ app.post('/login', (req, res) => {
     }
     if (loginData.password == password) {
         // successful login
+        delete req.session.user;
         req.session.user = userId;
         res.json(true);
         return;
