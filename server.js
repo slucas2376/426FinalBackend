@@ -212,28 +212,14 @@ app.get('/tweet/:id', (req, res) => {
     return;
 });
 
-app.post('/tweets/recent', (req, res) => {
-    // sends out array of (limit) most recent Tweet objects in descending order of posting, can skip any number of more recent tweets
-    let skip = req.body.skip;
-    let limit = req.body.limit;
-    if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
-    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
-    if (limit < 1 || limit > 75) {
-        res.status(400).send("400 bad request: tweet limit out of bounds.");
-        return;
-    }
-    let current = Tweet.nextId -1 - skip;
-    console.log(current);
-    if (current < 0) {
-        res.status(400).send("400 bad request: skipped all tweets");
-        return;
-    }
+app.get('/tweets/recent', (req, res) => {
+    // sends out array of (limit) most recent Tweet objects in descending order of posting
+    let limit = 75;
+    let current = Tweet.nextId - 1;
     let last = current - limit;
-    if (last < 0) {last = 0;}
     let arr = [];
     while (limit > 0) {
         let t = Tweet.findById(current);
-        console.log("loop);
         if (!t.isDeleted && !(t == {})) {
             // generate the usertweet object for current
             t = Tweet.generateView(t.id);
@@ -250,30 +236,15 @@ app.post('/tweets/recent', (req, res) => {
     return;
 })
 
-app.post('/tweets/user/:userId', (req, res) => {
+app.get('/tweets/user/likes/:userId', (req, res) => {
     // sends out array of tweets, all by author :userId, in descending order of posting, liking, or retweeting
-    let skip = req.body.skip;
-    let limit = req.body.limit;
-    let findType = req.body.findType;
-    if (findType != "like" && findType != "post" && findType != "retweet") {res.status(400).send("400 bad request: invalid filter criterion"); return;};
-    if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
-    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
-    if (limit < 1 || limit > 75) {
-        res.status(400).send("400 bad request: tweet limit out of bounds.");
-        return;
-    }
+    let limit = 75;
     let user = User.findById(req.params.userId);
     if (user == {}) {res.status(404).send("404: user not found"); return;};
     let readArr = [];
-    if (findType == "like") { readArr = user.likedTweets.map(e => e) };
-    if (findType == "post") { readArr = user.postedTweets.map(e => e) };
-    if (findType == "retweet") { readArr = user.hasRetweeted.map(e => e) };
+    readArr = user.likedTweets.map(e => e)
     if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
-    let current = readArr.length - 1 - skip;
-    if (current < 0) {
-        res.status(400).send("400 bad request: skipped all tweets");
-        return;
-    }
+    let current = readArr.length - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
     let arr = [];
@@ -295,16 +266,69 @@ app.post('/tweets/user/:userId', (req, res) => {
     return;
 })
 
-app.post('/tweets/:id/replies', (req, res) => {
-    // sends array of tweets that are replies to tweet :id, least recent first
-    let skip = req.body.skip;
-    let limit = req.body.limit;
-    if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
-    if (skip == "") {skip = 0;} else {skip = parseInt(skip);}
-    if (limit < 1 || limit > 75) {
-        res.status(400).send("400 bad request: tweet limit out of bounds.");
-        return;
+app.get('/tweets/user/posts/:userId', (req, res) => {
+    // sends out array of tweets, all by author :userId, in descending order of posting, liking, or retweeting
+    let limit = 75;
+    let user = User.findById(req.params.userId);
+    if (user == {}) {res.status(404).send("404: user not found"); return;};
+    let readArr = [];
+    readArr = user.postedTweets.map(e => e);
+    if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
+    let current = readArr.length - 1;
+    let last = current - limit;
+    if (last < 0) {last = 0;}
+    let arr = [];
+    while (limit > 0) {
+        let t = Tweet.findById(readArr[current]);
+        if (!t.isDeleted && !(t == {})) {
+            // generate the usertweet object for current
+            t = Tweet.generateView(t.id);
+            if (req.session.user = t.userId) { t.isMine = true; }
+            let likedTweets = User.findById(req.session.user).likedTweets;
+            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
+            arr.push(t);
+            limit -= 1;
+        }
+        current -= 1;
+        if (current < 0) {break;}
     }
+    res.json(arr);
+    return;
+})
+
+app.get('/tweets/user/retweets/:userId', (req, res) => {
+    // sends out array of tweets, all by author :userId, in descending order of posting, liking, or retweeting
+    let limit = 75;
+    let user = User.findById(req.params.userId);
+    if (user == {}) {res.status(404).send("404: user not found"); return;};
+    let readArr = [];
+    readArr = user.hasRetweeted.map(e => e);
+    if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
+    let current = readArr.length - 1;
+    let last = current - limit;
+    if (last < 0) {last = 0;}
+    let arr = [];
+    while (limit > 0) {
+        let t = Tweet.findById(readArr[current]);
+        if (!t.isDeleted && !(t == {})) {
+            // generate the usertweet object for current
+            t = Tweet.generateView(t.id);
+            if (req.session.user = t.userId) { t.isMine = true; }
+            let likedTweets = User.findById(req.session.user).likedTweets;
+            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
+            arr.push(t);
+            limit -= 1;
+        }
+        current -= 1;
+        if (current < 0) {break;}
+    }
+    res.json(arr);
+    return;
+})
+
+app.get('/tweets/:id/replies', (req, res) => {
+    // sends array of tweets that are replies to tweet :id, least recent first
+    let limit = 75
     let parent = Tweet.findById(req.params.id);
     if (parent == {}) {
         res.status(404).send("404: tweet not found");
@@ -313,11 +337,7 @@ app.post('/tweets/:id/replies', (req, res) => {
     if (readArr.length == 0) {
         res.status(404).send("404: tweet has no replies.");
         return;}
-    let current = 0 + skip;
-    if (current > readArr.length) {
-        res.status(400).send("400 bad request: skipped all tweets.");
-        return;
-    }
+    let current = 0;
     let last = current + limit;
     if (last >= readArr.length) {last = readArr.length - 1;}
     let arr = [];
@@ -340,7 +360,7 @@ app.post('/tweets/:id/replies', (req, res) => {
     return;
 })
 
-app.post('/tweet', (req, res) => {
+app.post('/tweets', (req, res) => {
     // adds new tweet to tweetData, given fields in req body: type, body, parentId (optional) and returns Tweet object
     if (req.session.user == undefined) {
         res.status(403).send("403 forbidden")
