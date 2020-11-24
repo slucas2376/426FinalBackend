@@ -2,40 +2,43 @@ API for Definitely Not Twitter
 
 Tweet systems:
 
-Get requests to [domain]/tweets/all will return a JSON object array of all tweet IDs on the server
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweets/all will return a JSON object array of all tweet IDs on the server
 body: N/A
 
 
 
-Post requests to [domain]/tweets/recent will return a JSON object array of the specified number of tweets in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted. Trying to skip enough tweets that the array fills starting from an index lower than 0 will give an error.
-body:
-		limit: A string containing a number between 1 and 75 that is the maximum number of tweets in the array. If this field is left as an empty string it will default to 50.
-		skip: A string containing a number that signifies how many of the most recent tweets to skip over before starting to fill the array. If this field is left as an empty string it will default to 0.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweets/recent will return a JSON object array of up to 75 tweets in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted.
+body: N/A
 
 
 
-Post requests to [domain]/tweets/user/:userId will return a JSON object array of the specified number of tweets in descending order of posting (most recent first), that the user with ID :userId has either posted or liked.
-body:
-		limit: A string containing a number between 1 and 75 that is the maximum number of tweets in the array. If this field is left as an empty string it will default to 50.
-		skip: A string containing a number that signifies how many of the most recent tweets that fulfill the other criteria to skip over before starting to fill the array. If this field is left as an empty string it will default to 0.
-		findType: A string containing the type of tweet by the user to get. Options are "like", for tweets liked by the user, "post", for tweets posted by the user, and "retweet", for tweets retweeted by the user. Note that "retweet" does not get the user's retweets, but the actual parent tweet.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweets/user/likes/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has liked.
+body: N/A
 
 
 
-Post requests to [domain]/tweets/:id/replies will return a JSON object array of the specified number of tweets in ascending order of posting (least recent first), that are replies to the tweet with ID :id.
-body:
-		limit: A string containing a number between 1 and 75 that is the maximum number of tweets in the array. If this field is left as an empty string it will default to 50.
-		skip: A string containing a number that signifies how many replies to skip over before starting to fill the array. If this field is left as an empty string it will default to 0.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweets/user/posts/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has posted.
+body: N/A
 
 
 
-Get requests to [domain]/tweet/:id will get a single JSON tweet object with the integer ID :id
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweets/user/retweets/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has retweeted.
+body: N/A
+
+
+
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweets/:id/replies will return a JSON object array of up to 75 tweets in ascending order of posting (least recent first), that are replies to the tweet with ID :id.
+body: N/A
+
+
+
+Get requests to https://comp426finalbackendactual2.herokuapp.com//tweet/:id will get a single JSON tweet object with the integer ID :id
 body:
 		id: An int containing the tweet's ID.
 
 
 
-Post requests to [domain]/tweet with body below will add a new tweet with the appropriate properties and return a full JSON tweet object.
+Post requests to https://comp426finalbackendactual2.herokuapp.com//tweet with body below will add a new tweet with the appropriate properties and return a full JSON tweet object.
 body:
 		type: A string containing the tweet's type. valid types are "tweet", "retweet", and "reply"
 		body: A string containing the tweet's text body. Replies and tweets have a minimum length of 1, retweets have a minimum length of 0. All types have a maximum length of 280.
@@ -48,7 +51,7 @@ body:
 
 
 
-Put requests to [domain]/tweets/:id with request body below will edit the tweet with ID :id with new properties, if applicable, and return a full JSON tweet object with the new properties.
+Put requests to https://comp426finalbackendactual2.herokuapp.com//tweets/:id with request body below will edit the tweet with ID :id with new properties, if applicable, and return a full JSON tweet object with the new properties.
 body:
 		body: A string containing the tweet's new text body. Maximum length 280 characters, minimum 1 for tweets and replies, 0 for retweets. If no changes are desired, request should include this field as a blank string.
 		mediaType: A string containing the type of media to embed in the tweet. Options are "none", "image", and "video". If no changes in type are desired, request should include this field as a blank string.
@@ -56,7 +59,7 @@ body:
 
 
 
-Post requests to [domain]/tweets/:id/like will unlike the tweet with ID :id if the user has liked it, and will like the tweet if the user has not liked it. Response will be true if the operation was successful.
+Post requests to https://comp426finalbackendactual2.herokuapp.com//tweets/:id/like will unlike the tweet with ID :id if the user has liked it, and will like the tweet if the user has not liked it. Response will be true if the operation was successful.
 body: N/A
 
 
@@ -70,18 +73,18 @@ body: N/A
 
 Login/userbase interaction systems:
 
-Post requests to [domain]/login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back true
+Post requests to https://comp426finalbackendactual2.herokuapp.com//login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back true
 body:
 		userId: A string containing the account ID/login name of the account attempting to log in.
 		password: A string containing the user's password input.
 
 
 
-Get requests to [domain]/logout will log out the currently logged in user and send back true. Works regardless of whether there is a user logged in.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//logout will log out the currently logged in user and send back true. Works regardless of whether there is a user logged in.
 
 
 
-Post requests to [domain]/register with body below will add a new User object to the users database, and allow for that user to log in.
+Post requests to https://comp426finalbackendactual2.herokuapp.com//register with body below will add a new User object to the users database, and allow for that user to log in.
 body:
 		userId: A string containing the user's account ID which they will use to log in. Max length 16 characters.
 		displayName: A string containing the user's desired display name. Max length 32 characters.
@@ -90,32 +93,32 @@ body:
 
 
 
-Delete requests to [domain]/users/:id will delete the user account and all tweets it has posted, and log the user out.
+Delete requests to https://comp426finalbackendactual2.herokuapp.com//users/:id will delete the user account and all tweets it has posted, and log the user out.
 body: N/A
 
 
 
-Get requests to [domain]/users will only go through if currently logged in as an admin. Response will be a JSON object containing all User objects in the database as key-value pairs.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//users will only go through if currently logged in as an admin. Response will be a JSON object containing all User objects in the database as key-value pairs.
 body: N/A
 
 
 
-Get requests to [domain]/users/idnames/:parameter will send back a JSON array containing an object for each user whose userId or displayName contains :parameter. These objects have a userId field and a displayName field.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//users/idnames/:parameter will send back a JSON array containing an object for each user whose userId or displayName contains :parameter. These objects have a userId field and a displayName field.
 body: N/A
 
 
 
-Get requests to [domain]/users/:id will return a JSON User object if logged in as an admin, or as the user with ID :id. Otherwise, the response will contain a JSON UserView object, which is a User object without the password field.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//users/:id will return a JSON User object if logged in as an admin, or as the user with ID :id. Otherwise, the response will contain a JSON UserView object, which is a User object without the password field.
 body: N/A
 
 
 
-Get requests to [domain]/users/current will get a UserView object for the currently logged in user.
+Get requests to https://comp426finalbackendactual2.herokuapp.com//users/current will get a UserView object for the currently logged in user.
 body: N/A
 
 
 
-Put requests to [domain]/users/:id will update a stored User object if the following fields are included in the body of the request. If successful, it will send back a UserView object of the user in question. Request will be denied unless the currently-logged-in user is an admin account or is logged in on the account with ID :id.
+Put requests to https://comp426finalbackendactual2.herokuapp.com//users/:id will update a stored User object if the following fields are included in the body of the request. If successful, it will send back a UserView object of the user in question. Request will be denied unless the currently-logged-in user is an admin account or is logged in on the account with ID :id.
 body:
 		displayName: A string containing the user's desired new display name. Max length 32 characters. If this field should not be changed, its value should be equal to the original value.
 		password: A string containing the user's desired new password. Max length 16 characters. If this field should not be changed, its value should be equal to the original value.

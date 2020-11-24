@@ -62,10 +62,12 @@ Tweet.generateView = (tweetId) => {
     // will return empty object if tweet does not exist;
     let t = Tweet.findById(tweetId);
     if (!t.isDeleted) {
-        let v = t;
+        // v = shallow copy of t
+        let v = {
+            ...t
+        };
         v.isMine = false;
         v.isLiked = false;
-        v.author = {};
         return v;
     } else { return t; }
 }

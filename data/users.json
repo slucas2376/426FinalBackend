@@ -7,7 +7,7 @@
     "profileDescription": "Your description goes here.",
     "type": "admin",
     "likedTweets": [],
-    "postedTweets": [],
+    "postedTweets": ["0", "1", "2"],
     "hasRetweeted": []
   },
   "test": {
@@ -18,7 +18,7 @@
     "profileDescription": "test desc",
     "type": "user",
     "likedTweets": [],
-    "postedTweets": [],
-    "hasRetweeted": []
+    "postedTweets": ["3", "4"],
+    "hasRetweeted": ["0"]
   }
 }

@@ -57,9 +57,9 @@ User.makeView = (userObj) => {
     let viewType = userObj.type;
     let viewPosted = userObj.tweetsPosted;
     let viewLiked = userObj.tweetsLiked;
-    // let viewRetweeted = userObj.hasRetweeted;
+    let viewRetweeted = userObj.hasRetweeted;
     return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, profileDescription: viewDescription,
-        type: viewType, tweetsLiked: viewLiked, tweetsPosted: viewPosted, // hasRetweeted: viewRetweeted
+        type: viewType, tweetsLiked: viewLiked, tweetsPosted: viewPosted, hasRetweeted: viewRetweeted
     }
 }
 

@@ -15,10 +15,7 @@
 "isDeleted": false,
 "mediaType": "none",
 "videoId": "",
-"imageLink": "",
-"isMine": true,
-"isLiked": false,
-"author": {}
+"imageLink": ""
 },
 "1": {
 "isEdited": false,
@@ -36,10 +33,7 @@
 "isDeleted": false,
 "mediaType": "none",
 "videoId": "",
-"imageLink": "",
-"isMine": true,
-"isLiked": false,
-"author": {}
+"imageLink": ""
 },
 "2": {
 "isEdited": false,
@@ -59,10 +53,7 @@
 "isDeleted": false,
 "mediaType": "image",
 "videoId": "",
-"imageLink": "https://i.kym-cdn.com/photos/images/newsfeed/001/250/515/cd9.jpg",
-"isMine": true,
-"isLiked": false,
-"author": {}
+"imageLink": "https://i.kym-cdn.com/photos/images/newsfeed/001/250/515/cd9.jpg"
 },
 "3": {
 "isEdited": false,
@@ -80,10 +71,7 @@
 "isDeleted": false,
 "mediaType": "video",
 "videoId": "nNDmLA5a5zg",
-"imageLink": "",
-"isMine": true,
-"isLiked": false,
-"author": {}
+"imageLink": ""
 },
 "4": {
 "isEdited": false,
@@ -101,9 +89,6 @@
 "isDeleted": false,
 "mediaType": "none",
 "videoId": "",
-"imageLink": "",
-"isMine": true,
-"isLiked": false,
-"author": {}
+"imageLink": ""
 }
 }
