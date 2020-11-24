@@ -138,6 +138,7 @@ app.get('/users', (req, res) => {
 app.get('/users/current', (req, res) => {
 
     let user = req.cookies['user'];
+    console.log(user);
     let u = User.findById(user);
     console.log(u);
     res.json(u);
