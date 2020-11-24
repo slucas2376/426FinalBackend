@@ -223,6 +223,7 @@ app.get('/tweets/recent', (req, res) => {
         return;
     }
     let current = Tweet.nextId -1 - skip;
+    console.log(current);
     if (current < 0) {
         res.status(400).send("400 bad request: skipped all tweets");
         return;
@@ -232,6 +233,7 @@ app.get('/tweets/recent', (req, res) => {
     let arr = [];
     while (limit > 0) {
         let t = Tweet.findById(current);
+        console.log("loop");
         if (!t.isDeleted && !(t == {})) {
             // generate the usertweet object for current
             t = Tweet.generateView(t.id);
@@ -245,6 +247,7 @@ app.get('/tweets/recent', (req, res) => {
         if (current < 0) {break;}
     }
     res.json(arr);
+    console.log(arr);
     return;
 })
 
