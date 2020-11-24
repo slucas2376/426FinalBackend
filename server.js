@@ -223,8 +223,8 @@ app.get('/tweets/recent', (req, res) => {
         return;
     }
     let current = Tweet.nextId - 1 - skip;
-    console.log(typeof(Tweet.nextId));
-    console.log(typeof(skip));
+    console.log(Tweet.nextId);
+    console.log(skip);
     console.log(current);
     if (current < 0) {
         res.status(400).send("400 bad request: skipped all tweets");
