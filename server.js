@@ -2,6 +2,8 @@ const express = require('express');
 
 const cors = require('cors');
 
+const cookieParser = require('cookie-parser')
+
 const app = express();
 
 // let corsOrigin = "http://localhost:3000";
@@ -9,6 +11,8 @@ const app = express();
 // let corsOrigin = "http://24.106.176.98" // raj
 // let corsOrigin = "https://pedantic-lichterman-ee0404.netlify.app";
 let corsOrigin = "https://rajgandecha.github.io"
+
+app.use(cookieParser());
 
 app.use(cors({
     origin: corsOrigin,
@@ -61,15 +65,13 @@ app.post('/login', (req, res) => {
     if (loginData.password == password) {
         // successful login
         if (req.session.user) {
-        console.log("pre-delete " + req.session.user);
-        delete req.session.user;
-        console.log("post-delete " + req.session.user);
-        req.session.user = userId;
-        console.log("after-set " + req.session.user);}
-        else {
+        //console.log("pre-delete " + req.session.user);
+        //res.clearCookie('user');
+        //console.log("post-delete " + req.session.user);
+        res.cookie('user', userId);
+        } else {
             console.log("property did not exist; attempting initialization")
-            req.session.user = "";
-            req.session.user = userId;
+            res.cookie('user', userId);
         }
         res.json(true);
         return;
@@ -132,8 +134,9 @@ app.get('/users', (req, res) => {
 })
 
 app.get('/users/current', (req, res) => {
-    let u = User.findById(req.session.user);
-    console.log(req.session.user);
+    let user = req.cookies['user'];
+    let u = User.findById(user);
+    console.log(u);
     res.json(u);
 })
 
