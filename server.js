@@ -53,7 +53,7 @@ app.post('/login', (req, res) => {
     if (userId == "") {res.status(400).send("400 bad request: invalid username"); return;}
     let password = req.body.password;
     if (password == "") {res.status(400).send("400 bad request: invalid password"); return;}
-    let loginData = userData.get(userId);
+    let loginData = User.findById(userId);
     if (loginData == null || loginData == undefined || loginData == {}) {
         res.status(404).send("404: user not found");
         return;
