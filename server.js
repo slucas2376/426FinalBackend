@@ -34,6 +34,7 @@ const userData = require('data-store')({path: process.cwd() + '/data/users.json'
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
+/*
 const expressSession = require('express-session');
 app.use(expressSession({
     name: "defNotTwitterSessionCookie",
@@ -47,6 +48,7 @@ app.use(expressSession({
     }
 
 }));
+*/
 
 // login/user database interaction API
 app.post('/login', (req, res) => {
