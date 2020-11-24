@@ -8,7 +8,7 @@ const app = express();
 // let corsOrigin = "174.111.45.28"  // owen
 // let corsOrigin = "http://24.106.176.98" // raj
 // let corsOrigin = "https://pedantic-lichterman-ee0404.netlify.app";
-let corsOrigin = "*"
+let corsOrigin = "https://rajgandecha.github.io"
 
 app.use(cors({
     origin: corsOrigin,
