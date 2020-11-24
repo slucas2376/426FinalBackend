@@ -13,7 +13,7 @@ app.use(cors({
     credentials: true
 }));
 
-app.all('/', function(req, res, next) {
+app.all('/register', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next()
