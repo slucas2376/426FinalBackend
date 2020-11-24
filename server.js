@@ -215,6 +215,8 @@ app.get('/tweet/:id', (req, res) => {
 app.get('/tweets/recent', (req, res) => {
     // sends out array of (limit) most recent Tweet objects in descending order of posting
     let limit = req.body.limit;
+    console.log(limit);
+    console.log(typeof(limit));
     if (limit == "") {limit = 50;} else {limit = parseInt(limit);}
     if (limit < 1 || limit > 75) {
         res.status(400).send("400 bad request: tweet limit out of bounds.");
@@ -222,7 +224,7 @@ app.get('/tweets/recent', (req, res) => {
     }
     console.log(limit);
     console.log(typeof(limit));
-    
+
     let current = Tweet.nextId - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
