@@ -14,6 +14,11 @@ app.use(cors({
     credentials: true
 }));
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+});
+
 const Tweet = require('./Tweet.js');
 
 const User = require('./User.js');
@@ -82,7 +87,7 @@ app.post('/register', (req, res) => {
         return;
     }
     let u = User.create(userId, displayName, password, avatar);
-    res.json(true);
+    return res.json(true);
 })
 
 app.get('/users/idnames/:parameter', (req, res) => {
