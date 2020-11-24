@@ -14,10 +14,19 @@ let corsOrigin = "https://rajgandecha.github.io"
 
 //app.use(cookieParser());
 
+const config = {
+    origin: corsOrigin,
+    credentials: true,
+};
+
+app.use(cors(config));
+
+/*
 app.use(cors({
     origin: corsOrigin,
     credentials: true
 }));
+*/
 
 /*
 app.use((req, res, next) => {
@@ -145,6 +154,7 @@ app.get('/users', (req, res) => {
 
 app.get('/users/current', (req, res) => {
 
+    console.log("current user is: " + req.session.user);
     let user = req.session.user;
     console.log(user);
     let u = User.findById(user);

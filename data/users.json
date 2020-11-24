@@ -7,7 +7,11 @@
     "profileDescription": "Your description goes here.",
     "type": "admin",
     "likedTweets": [],
-    "postedTweets": ["0", "1", "2"],
+    "postedTweets": [
+      "0",
+      "1",
+      "2"
+    ],
     "hasRetweeted": []
   },
   "test": {
@@ -18,7 +22,23 @@
     "profileDescription": "test desc",
     "type": "user",
     "likedTweets": [],
-    "postedTweets": ["3", "4"],
-    "hasRetweeted": ["0"]
+    "postedTweets": [
+      "3",
+      "4"
+    ],
+    "hasRetweeted": [
+      "0"
+    ]
+  },
+  "rajg": {
+    "id": "rajg",
+    "displayName": "rajgg",
+    "password": "conleche101",
+    "avatar": "thelastairbender",
+    "profileDescription": "Your description goes here.",
+    "type": "user",
+    "likedTweets": [],
+    "postedTweets": [],
+    "hasRetweeted": []
   }
 }
