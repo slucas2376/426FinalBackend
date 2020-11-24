@@ -77,7 +77,7 @@ app.post('/login', (req, res) => {
             console.log(typeof(userId));
             res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         }
-        res.json(true);
+        res.send(true);
         return;
     }
     res.status(403).send("403 forbidden: username or password incorrect")
