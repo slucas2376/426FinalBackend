@@ -78,7 +78,7 @@ app.post('/login', (req, res) => {
             console.log("property did not exist; attempting initialization")
             console.log(userId);
             //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
-            req.session.user = userId;
+            req.session.cookie.user = userId;
         }
         res.send(true);
         return;
@@ -90,6 +90,7 @@ app.get('/logout', (req, res) => {
     // logs out current user, sends back true
     delete req.session.user;
     res.json(true);
+    return;
 })
 
 app.post('/register', (req, res) => {
@@ -109,7 +110,8 @@ app.post('/register', (req, res) => {
         return;
     }
     let u = User.create(userId, displayName, password, avatar);
-    return res.json(true);
+    res.json(true);
+    return;
 })
 
 app.get('/users/idnames/:parameter', (req, res) => {
@@ -142,7 +144,7 @@ app.get('/users', (req, res) => {
 
 app.get('/users/current', (req, res) => {
 
-    let user = req.session.user;
+    let user = req.session.cookie.user;
     console.log(user);
     let u = User.findById(user);
     console.log(u);
