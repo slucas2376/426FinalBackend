@@ -7,17 +7,17 @@ const app = express();
 // let corsOrigin = "http://localhost:3000";
 // let corsOrigin = "174.111.45.28"  // owen
 // let corsOrigin = "http://24.106.176.98" // raj
-let corsOrigin = "*";
+let corsOrigin = "http://rajgandecha.github.io/426Final";
 
-/*app.use(cors({
+app.use(cors({
     origin: corsOrigin,
     credentials: true
-}));*/
+}));
 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
-});
+});*/
 
 const Tweet = require('./Tweet.js');
 
