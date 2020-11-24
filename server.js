@@ -60,11 +60,17 @@ app.post('/login', (req, res) => {
     }
     if (loginData.password == password) {
         // successful login
+        if (req.session.user) {
         console.log("pre-delete " + req.session.user);
         delete req.session.user;
         console.log("post-delete " + req.session.user);
         req.session.user = userId;
-        console.log("after-set " + req.session.user);
+        console.log("after-set " + req.session.user);}
+        else {
+            console.log("property did not exist; attempting initialization")
+            req.session.user = "";
+            req.session.user = userId;
+        }
         res.json(true);
         return;
     }
