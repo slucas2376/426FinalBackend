@@ -34,7 +34,7 @@ const userData = require('data-store')({path: process.cwd() + '/data/users.json'
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-/*
+
 const expressSession = require('express-session');
 app.use(expressSession({
     name: "defNotTwitterSessionCookie",
@@ -48,7 +48,7 @@ app.use(expressSession({
     }
 
 }));
-*/
+
 
 // login/user database interaction API
 app.post('/login', (req, res) => {
@@ -70,12 +70,12 @@ app.post('/login', (req, res) => {
         //console.log("pre-delete " + req.session.user);
         //res.clearCookie('user');
         //console.log("post-delete " + req.session.user);
-        res.cookie('user', userId);
+        res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         console.log(userId);
         } else {
             console.log("property did not exist; attempting initialization")
             console.log(userId);
-            res.cookie('user', userId);
+            res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         }
         res.json(true);
         return;
