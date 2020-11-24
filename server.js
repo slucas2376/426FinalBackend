@@ -226,13 +226,13 @@ app.get('/tweets/recent', (req, res) => {
     let arr = [];
     while (limit > 0) {
         let t = Tweet.findById(current);
-        console.log("loop");
         if (!t.isDeleted && !(t == {})) {
             // generate the usertweet object for current
             t = Tweet.generateView(t.id);
             if (req.session.user = t.userId) { t.isMine = true; }
             let likedTweets = User.findById(req.session.user).likedTweets;
             if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }
+            console.log(t);
             arr.push(t);
             limit -= 1;
         }
