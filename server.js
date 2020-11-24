@@ -42,9 +42,10 @@ app.use(expressSession({
     resave: false,
     saveUninitialized: false,
     proxy: true, // true for heroku
-    cookie: {sameSite: "none", // comment out for local testing
+    cookie : {
         secure: true, // false for local testing
-        maxAge: 5184000000
+        maxAge: 5184000000,
+        sameSite: "none"
     }
 
 }));
@@ -70,12 +71,14 @@ app.post('/login', (req, res) => {
         //console.log("pre-delete " + req.session.user);
         //res.clearCookie('user');
         //console.log("post-delete " + req.session.user);
-        res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
+        //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
+        req.session.user = userId;
         console.log(userId);
         } else {
             console.log("property did not exist; attempting initialization")
             console.log(typeof(userId));
-            res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
+            //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
+            req.session.user = userId;
         }
         res.send(true);
         return;
