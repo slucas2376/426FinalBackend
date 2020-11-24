@@ -14,10 +14,7 @@ class Tweet {
         this.videoId = "";
         this.imageLink = "";
         if (mediaType == "video") {
-            if (mediaId.indexOf("http://www.youtube.com/embed/" == 0)) {this.videoId = mediaId.slice(29, 40)}
-            else if (mediaId.indexOf("https://www.youtube.com/embed/" == 0)) {this.videoId = mediaId.slice(30, 41)}
-            else if (mediaId.length == 11) {this.videoId = mediaId}
-            else {this.videoId = ""};
+            if (mediaId.length == 11) {this.videoId = mediaId};
         } else {this.videoId = "";}
         if (mediaType == "image") {
             this.imageLink = mediaId;
