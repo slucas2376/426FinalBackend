@@ -78,7 +78,7 @@ app.post('/login', (req, res) => {
             console.log("property did not exist; attempting initialization")
             console.log(userId);
             //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
-            req.session.cookie.user = userId;
+            req.session.user = userId;
         }
         res.send(true);
         return;
