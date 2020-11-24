@@ -2,7 +2,7 @@ const express = require('express');
 
 const cors = require('cors');
 
-const cookieParser = require('cookie-parser')
+//const cookieParser = require('cookie-parser')
 
 const app = express();
 
@@ -12,7 +12,7 @@ const app = express();
 // let corsOrigin = "https://pedantic-lichterman-ee0404.netlify.app";
 let corsOrigin = "https://rajgandecha.github.io"
 
-app.use(cookieParser());
+//app.use(cookieParser());
 
 app.use(cors({
     origin: corsOrigin,
@@ -76,14 +76,14 @@ app.post('/login', (req, res) => {
         console.log(userId);
         } else {
             console.log("property did not exist; attempting initialization")
-            console.log(typeof(userId));
+            console.log(userId);
             //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
             req.session.user = userId;
         }
         res.send(true);
         return;
     }
-    res.status(403).send("403 forbidden: username or password incorrect")
+    res.status(403).send("403 forbidden: username or password incorrect");
 });
 
 app.get('/logout', (req, res) => {
@@ -142,7 +142,7 @@ app.get('/users', (req, res) => {
 
 app.get('/users/current', (req, res) => {
 
-    let user = req.cookies.user;
+    let user = req.session.user;
     console.log(user);
     let u = User.findById(user);
     console.log(u);
