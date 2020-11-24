@@ -69,6 +69,7 @@ app.post('/login', (req, res) => {
         //res.clearCookie('user');
         //console.log("post-delete " + req.session.user);
         res.cookie('user', userId);
+        console.log(userId);
         } else {
             console.log("property did not exist; attempting initialization")
             res.cookie('user', userId);
@@ -134,7 +135,8 @@ app.get('/users', (req, res) => {
 })
 
 app.get('/users/current', (req, res) => {
-    let user = req.cookies['user'];
+
+    let user = req.session.user;
     let u = User.findById(user);
     console.log(u);
     res.json(u);
