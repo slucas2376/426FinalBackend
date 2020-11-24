@@ -113,7 +113,7 @@ body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/users/current will get a UserView object for the currently logged in user.
+Get requests to https://comp426finalbackendactual2.herokuapp.com/users/current will get a User object for the currently logged in user.
 body: N/A
 
 

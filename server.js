@@ -122,7 +122,8 @@ app.get('/users', (req, res) => {
 })
 
 app.get('/users/current', (req, res) => {
-    let u = User.makeView(User.findById(req.session.user));
+    let u = User.findById(req.session.user);
+    console.log(req.session.user);
     res.json(u);
 })
 
