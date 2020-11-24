@@ -462,7 +462,7 @@ app.delete('/tweets/:id', (req, res) => {
 })
 
 
-const port = process.env.port || 443;
+const port = process.env.port || 3030;
 app.listen(port, () => {
     console.log('server running on port ' + port);
     //User.createAdmin("sclu", "Dev Sophie", "426final", "https://imgur.com/572zTSG.jpg", "mood: aaaaaaaaaaaaaaa");
