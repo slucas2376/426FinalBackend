@@ -9,15 +9,10 @@ const app = express();
 // let corsOrigin = "http://24.106.176.98" // raj
 let corsOrigin = "*";
 
-app.use(cors({
+app.use(cors(/*{
     origin: corsOrigin,
     credentials: true
-}));
-
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
+}*/));
 
 const Tweet = require('./Tweet.js');
 
