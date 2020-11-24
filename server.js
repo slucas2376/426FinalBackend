@@ -222,7 +222,7 @@ app.get('/tweets/recent', (req, res) => {
         res.status(400).send("400 bad request: tweet limit out of bounds.");
         return;
     }
-    let current = Tweet.nextId -1 - skip;
+    let current = Tweet.nextId - 1 - skip;
     console.log(typeof(Tweet.nextId));
     console.log(typeof(skip));
     console.log(current);
