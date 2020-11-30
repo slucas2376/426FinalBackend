@@ -17,7 +17,7 @@ body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com//weets/user/posts/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has posted.
+Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/user/posts/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has posted.
 body: N/A
 
 
