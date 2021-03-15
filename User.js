@@ -68,7 +68,7 @@ User.findById = (id) => {
     if (id == undefined || id == null) {
         return {};
     }
-    let u = userData.data[id];
+    let u = userData.get(id.toString());
     if (u == undefined || u == null) {
         return {};
     }
