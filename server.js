@@ -82,12 +82,12 @@ app.post('/login', (req, res) => {
         //console.log("post-delete " + req.session.user);
         //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         req.session.user = userId;
-        console.log(userId);
+        console.log(req.session.user + " logged in");
         } else {
-            console.log("property did not exist; attempting initialization")
-            console.log(userId);
+            console.log("property did not exist; attempting initialization on user: " + userId);
             //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
             req.session.user = userId;
+            console.log("initialized for user " + req.session.user);
         }
         res.send(true);
         return;
@@ -97,7 +97,9 @@ app.post('/login', (req, res) => {
 
 app.get('/logout', (req, res) => {
     // logs out current user, sends back true
-    delete req.session.user;
+    // delete req.session.user;
+    console.log("user " + req.session.user + " logged out");
+    req.session.user = {};
     res.json(true);
     return;
 })
@@ -119,7 +121,7 @@ app.post('/register', (req, res) => {
         return;
     }
     let u = User.create(userId, displayName, password, avatar);
-    console.log("new user created:" + u);
+    console.log("new user created: " + u);
     res.json(true);
     return;
 })
