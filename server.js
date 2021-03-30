@@ -48,11 +48,11 @@ const expressSession = require('express-session');
 
 app.set('trust proxy', true);
 
-/*app.use(expressSession({
+app.use(expressSession({
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     proxy: true, // true for heroku
     cookie: {
         secure: true, // false for local testing
@@ -60,11 +60,11 @@ app.set('trust proxy', true);
         sameSite: "none"
     }
 
-}));*/
+}));
 
 const cookieSession = require('cookie-session');
 
-app.use(cookieSession({
+/*app.use(cookieSession({
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     secureProxy: true,
@@ -74,7 +74,7 @@ app.use(cookieSession({
         sameSite: "none",
         path: "/"
     }
-}))
+}))*/
 
 
 
