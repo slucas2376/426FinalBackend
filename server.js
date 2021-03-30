@@ -45,21 +45,37 @@ app.use(bodyParser.json());
 
 
 const expressSession = require('express-session');
-app.use(expressSession({
+
+app.set('trust proxy', true);
+
+/*app.use(expressSession({
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
     saveUninitialized: false,
     proxy: true, // true for heroku
-    cookie : {
+    cookie: {
         secure: true, // false for local testing
         maxAge: 5184000000,
         sameSite: "none"
     }
 
-}));
+}));*/
 
-app.set('trust proxy', 1);
+const cookieSession = require('cookie-session');
+
+app.use(cookieSession({
+    name: "defNotTwitterSessionCookie",
+    secret: "coronavirus really needs to just Not(tm)",
+    secureProxy: true,
+    cookie: {
+        secure: true,
+        maxAge: 5184000000,
+        sameSite: "none",
+        path: "/"
+    }
+}))
+
 
 
 // login/user database interaction API
