@@ -59,6 +59,8 @@ app.use(expressSession({
 
 }));
 
+app.set('trust proxy', 1);
+
 
 // login/user database interaction API
 app.post('/login', (req, res) => {
