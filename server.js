@@ -40,8 +40,8 @@ const Tweet = require('./Tweet.js');
 const User = require('./User.js');
 const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded());
 
 
 const expressSession = require('express-session');
@@ -110,7 +110,7 @@ app.post('/login', (req, res) => {
             req.session.user = userId;
             console.log("initialized for user " + req.session.user);
         }
-        res.send(true);
+        res.send(`${req.session.user}`);
         return;
     }
     res.status(403).send("403 forbidden: username or password incorrect");
