@@ -73,7 +73,7 @@ body: N/A
 
 Login/userbase interaction systems:
 
-Post requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back true
+Get requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back true
 body:
 		userId: A string containing the account ID/login name of the account attempting to log in.
 		password: A string containing the user's password input.

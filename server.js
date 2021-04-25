@@ -79,10 +79,11 @@ const cookieSession = require('cookie-session');
 
 
 // login/user database interaction API
-app.post('/login', (req, res) => {
+app.get('/login', (req, res) => {
     // requires parameters userId and password, sends true if successful
     // lmao what's an """encryption""", seriously don't use passwords you care about here
     // maybe add logic to check if a user is already logged in, then send 400 already logged in?
+    console.log("login called; check for whether production even calls this")
     let userId = req.body.userId;
     if (userId == "") {res.status(400).send("400 bad request: invalid username"); return;}
     let password = req.body.password;
@@ -92,7 +93,6 @@ app.post('/login', (req, res) => {
         res.status(404).send("404: user not found");
         return;
     }
-    console.log("passed initial checks (also, checking for whether this function even works???");
     if (loginData.password == password) {
         // successful login
         console.log("password correct; starting login process");
