@@ -16,7 +16,7 @@ let corsOrigin = "https://slucas2376.github.io"
 
 const config = {
     origin: corsOrigin,
-    credentials: true,
+    credentials: true
 };
 
 app.use(cors(config));
@@ -78,6 +78,7 @@ const cookieSession = require('cookie-session');
 
 
 
+app.options('/login', cors());
 // login/user database interaction API
 app.post('/login', (req, res) => {
     // requires parameters userId and password, sends true if successful
@@ -116,6 +117,7 @@ app.post('/login', (req, res) => {
     res.status(403).send("403 forbidden: username or password incorrect");
 });
 
+
 app.get('/logout', (req, res) => {
     // logs out current user, sends back true
     // delete req.session.user;
@@ -125,6 +127,7 @@ app.get('/logout', (req, res) => {
     return;
 })
 
+app.options('/register', cors());
 app.post('/register', (req, res) => {
     // takes fields of (str) userId, (str) displayName, (str) password, (str image link) avatar (avatar is optional and defaults to whatever link we find for default)
     // sends back true on successful registration
