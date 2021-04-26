@@ -47,7 +47,7 @@ app.use(express.urlencoded());
 
 const expressSession = require('express-session');
 
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 app.use(expressSession({
     name: "defNotTwitterSessionCookie",
@@ -56,9 +56,9 @@ app.use(expressSession({
     saveUninitialized: false,
     proxy: true, // true for heroku
     cookie: {
-        secure: true, // false for local testing
-        maxAge: 5184000000,
-        sameSite: "none"
+        sameSite: 'none',
+        secure: true,
+        maxAge: 5184000000
     }
 
 }));
