@@ -103,7 +103,7 @@ app.get('/login', (req, res) => {
         //console.log("post-delete " + req.session.user);
         //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         req.session.user = userId;
-        console.log(req.session.user + " logged in");
+        console.log("logging in for: " + userId + " | " + req.session.user + " logged in");
         } else {
             console.log("property did not exist; attempting initialization on user: " + userId);
             //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
