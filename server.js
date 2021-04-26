@@ -95,7 +95,7 @@ app.get('/login', (req, res) => {
     if (loginData.password == password) {
         // successful login
         console.log("password correct; starting login process");
-        console.og(req.body);
+        console.log(req.body);
         console.log("req.session.user pre-login: " + req.session.user);
         if (req.session.user) {
         //console.log("pre-delete " + req.session.user);
