@@ -97,12 +97,12 @@ app.post('/login', (req, res) => {
     if (loginData.password == password) {
         // successful login
         console.log("password correct; starting login process");
-        req.session.regenerate();
+        req.session.regenerate(() => {});
         console.log("logging in for: " + userId + " | " + req.session.user + " logged in");
         console.log("property did not exist; attempting initialization on user: " + userId);
         //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         req.session.user = userId;
-        req.session.save();
+        req.session.save(() => {});
         console.log("initialized for user " + req.session.user);
         res.send(`${User.findById(userId)}`);
         return;
@@ -115,7 +115,7 @@ app.get('/logout', (req, res) => {
     // logs out current user, sends back true
     // delete req.session.user;
     console.log("user " + req.session.user + " logged out");
-    req.session.destroy();
+    req.session.regenerate(() => {});
     res.json(true);
     return;
 })
@@ -233,7 +233,7 @@ app.delete('/users/:id', (req, res) => {
             Tweet.delete(t);
         }
         let temp = User.delete(req.params.id);
-        req.session.destroy();
+        req.session.regenerate(() => {});
         if (temp) {res.json(true);
             return;}
         res.status(400).send("400 bad request: user could not be deleted");
