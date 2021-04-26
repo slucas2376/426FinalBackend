@@ -52,7 +52,7 @@ app.use(expressSession({
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     proxy: true, // true for heroku
     cookie: {
         secure: true, // false for local testing
@@ -98,17 +98,13 @@ app.post('/login', (req, res) => {
         console.log("password correct; starting login process");
         console.log(req.body);
         console.log("req.session.user pre-login: " + req.session.user);
-        if (req.session.user) {
-        //console.log("pre-delete " + req.session.user);
-        //res.clearCookie('user');
-        //console.log("post-delete " + req.session.user);
-        //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
-        req.session.user = userId;
+        req.session.regenerate();
         console.log("logging in for: " + userId + " | " + req.session.user + " logged in");
         } else {
             console.log("property did not exist; attempting initialization on user: " + userId);
             //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
             req.session.user = userId;
+            req.session.save();
             console.log("initialized for user " + req.session.user);
         }
         res.send(`${User.findById(userId)}`);
@@ -122,7 +118,7 @@ app.get('/logout', (req, res) => {
     // logs out current user, sends back true
     // delete req.session.user;
     console.log("user " + req.session.user + " logged out");
-    req.session.user = {};
+    req.session.destroy();
     res.json(true);
     return;
 })
@@ -240,7 +236,7 @@ app.delete('/users/:id', (req, res) => {
             Tweet.delete(t);
         }
         let temp = User.delete(req.params.id);
-        delete req.session.user;
+        req.session.destroy();
         if (temp) {res.json(true);
             return;}
         res.status(400).send("400 bad request: user could not be deleted");
