@@ -79,7 +79,7 @@ const cookieSession = require('cookie-session');
 
 
 
-// app.options('/login', cors());
+app.options('/login', cors(config));
 // login/user database interaction API
 app.post('/login', (req, res) => {
     // requires parameters userId and password, sends true if successful
@@ -120,7 +120,7 @@ app.get('/logout', (req, res) => {
     return;
 })
 
-// app.options('/register', cors());
+app.options('/register', cors(config));
 app.post('/register', (req, res) => {
     // takes fields of (str) userId, (str) displayName, (str) password, (str image link) avatar (avatar is optional and defaults to whatever link we find for default)
     // sends back true on successful registration
