@@ -96,17 +96,13 @@ app.post('/login', (req, res) => {
     if (loginData.password == password) {
         // successful login
         console.log("password correct; starting login process");
-        console.log(req.body);
-        console.log("req.session.user pre-login: " + req.session.user);
         req.session.regenerate();
         console.log("logging in for: " + userId + " | " + req.session.user + " logged in");
-        } else {
-            console.log("property did not exist; attempting initialization on user: " + userId);
-            //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
-            req.session.user = userId;
-            req.session.save();
-            console.log("initialized for user " + req.session.user);
-        }
+        console.log("property did not exist; attempting initialization on user: " + userId);
+        //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
+        req.session.user = userId;
+        req.session.save();
+        console.log("initialized for user " + req.session.user);
         res.send(`${User.findById(userId)}`);
         return;
     }
