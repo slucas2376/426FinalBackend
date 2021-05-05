@@ -104,10 +104,10 @@ app.post('/login', (req, res) => {
         console.log("property did not exist; attempting initialization on user: " + userId);
         //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         req.session.user = userId;
-        req.session.save(() => {});
         console.log(req.session);
         console.log("initialized for user " + req.session.user);
-        res.send(`${User.findById(userId)}`);
+        req.session.save(() => {res.send(`${User.findById(userId)}`)});
+        //res.send(`${User.findById(userId)}`);
         return;
     }
     res.status(403).send("403 forbidden: username or password incorrect");
