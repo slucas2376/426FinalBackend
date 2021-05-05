@@ -106,7 +106,7 @@ app.post('/login', (req, res) => {
         req.session.user = userId;
         console.log(req.session);
         console.log("initialized for user " + req.session.user);
-        req.session.save(() => {res.send(`${User.findById(userId)}`)});
+        req.session.save((err) => {res.send(`${User.findById(userId)}`)});
         //res.send(`${User.findById(userId)}`);
         return;
     }
