@@ -118,7 +118,6 @@ app.get('/logout', (req, res) => {
     // delete req.session.user;
     console.log("user " + req.session.user + " logged out");
     req.session.destroy();
-    console.log("user " + req.session.user + " should not exist");
     res.json(true);
     return;
 })
