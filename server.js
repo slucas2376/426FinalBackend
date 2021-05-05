@@ -50,16 +50,17 @@ const expressSession = require('express-session');
 app.set('trust proxy', 1);
 
 app.use(expressSession({
+    cookie: {
+        domain: 'https://426twitter20.com',
+        sameSite: 'none',
+        secure: true,
+        maxAge: 5184000000
+    }
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
     saveUninitialized: false,
     proxy: true, // true for heroku
-    cookie: {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 5184000000
-    }
 
 }));
 
