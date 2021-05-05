@@ -9,8 +9,8 @@ const app = express();
 // let corsOrigin = "http://localhost:3000";
 // let corsOrigin = "174.111.45.28"  // owen
 // let corsOrigin = "http://24.106.176.98" // raj
-// let corsOrigin = "https://pedantic-lichterman-ee0404.netlify.app";
-let corsOrigin = "https://slucas2376.github.io"
+let corsOrigin = "https://silly-kepler-b7fe39.netlify.app";
+//let corsOrigin = "https://slucas2376.github.io"
 
 //app.use(cookieParser());
 
@@ -47,7 +47,7 @@ app.use(express.urlencoded());
 
 const expressSession = require('express-session');
 
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 app.use(expressSession({
     name: "defNotTwitterSessionCookie",
