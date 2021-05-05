@@ -111,6 +111,7 @@ app.post('/login', (req, res) => {
 });
 
 
+app.options('/logout', cors(config));
 app.get('/logout', (req, res) => {
     // logs out current user, sends back true
     // delete req.session.user;
@@ -171,6 +172,7 @@ app.get('/users', (req, res) => {
         return;*/
 })
 
+app.options('/users/current', cors(config));
 app.get('/users/current', (req, res) => {
 
     console.log("current user is: " + req.session.user);
@@ -181,6 +183,7 @@ app.get('/users/current', (req, res) => {
     res.json(u);
 })
 
+app.options('/users/:id', cors(config));
 app.get('/users/:id', (req, res) => {
     // sends JSON object User for the relevant id, will only include password field if logged in as that user or account type admin
     let u = User.findById(req.params.id);
