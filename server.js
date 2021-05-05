@@ -47,7 +47,7 @@ app.use(express.urlencoded());
 
 const expressSession = require('express-session');
 
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 app.use(expressSession({
     name: "defNotTwitterSessionCookie",
