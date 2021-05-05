@@ -53,7 +53,8 @@ app.set('trust proxy', 1);
 app.use(session({
     cookie: {
         domain: 'api.426twitter20.com',
-        sameSite: 'none',
+        // sameSite: 'none',
+        httpOnly: false,
         secure: true,
         maxAge: 5184000000
     },
@@ -104,7 +105,7 @@ app.post('/login', (req, res) => {
         //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
         req.session.user = userId;
         req.session.save(() => {});
-        console.log("session: " + req.session);
+        console.log(req.session);
         console.log("initialized for user " + req.session.user);
         res.send(`${User.findById(userId)}`);
         return;
