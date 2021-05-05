@@ -9,7 +9,7 @@ const app = express();
 // let corsOrigin = "http://localhost:3000";
 // let corsOrigin = "174.111.45.28"  // owen
 // let corsOrigin = "http://24.106.176.98" // raj
-let corsOrigin = "https://silly-kepler-b7fe39.netlify.app";
+let corsOrigin = "https://426twitter20.com";
 //let corsOrigin = "https://slucas2376.github.io"
 
 //app.use(cookieParser());
