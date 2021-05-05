@@ -46,11 +46,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 
-const expressSession = require('express-session');
+const session = require('express-session');
 
 app.set('trust proxy', 1);
 
-app.use(expressSession({
+app.use(session({
     cookie: {
         domain: 'api.426twitter20.com',
         sameSite: 'none',
@@ -64,7 +64,7 @@ app.use(expressSession({
     proxy: true // true for heroku
 }));
 
-const cookieSession = require('cookie-session');
+// const cookieSession = require('cookie-session');
 
 /*app.use(cookieSession({
     name: "defNotTwitterSessionCookie",
@@ -117,7 +117,8 @@ app.get('/logout', (req, res) => {
     // logs out current user, sends back true
     // delete req.session.user;
     console.log("user " + req.session.user + " logged out");
-    req.session.regenerate(() => {});
+    req.session.destroy();
+    console.log("user " + req.session.user + " should not exist");
     res.json(true);
     return;
 })
