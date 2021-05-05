@@ -41,7 +41,7 @@ const Tweet = require('./Tweet.js');
 
 const User = require('./User.js');
 const session = require('express-session');
-const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
+// const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 app.use(express.json());
 app.use(express.urlencoded());
