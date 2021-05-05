@@ -83,7 +83,7 @@ app.use(session({
 
 app.options('/login', cors(config));
 // login/user database interaction API
-app.post('/login', (req, res) => {
+app.get('/login', (req, res) => {
     // requires parameters userId and password, sends true if successful
     // lmao what's an """encryption""", seriously don't use passwords you care about here
     // maybe add logic to check if a user is already logged in, then send 400 already logged in?
@@ -106,7 +106,7 @@ app.post('/login', (req, res) => {
         req.session.user = userId;
         console.log(req.session);
         console.log("initialized for user " + req.session.user);
-        req.session.save((err) => {res.send(`${User.findById(userId)}`)});
+        req.session.save((err) => {res.send(`${userId}`)});
         //res.send(`${User.findById(userId)}`);
         return;
     }
