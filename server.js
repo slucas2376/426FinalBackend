@@ -17,7 +17,8 @@ let corsOrigin = "https://426twitter20.com";
 const config = {
     origin: corsOrigin,
     methods: 'GET,PUT,POST,DELETE,OPTIONS',
-    credentials: true
+    credentials: true,
+    exposedHeaders: ["set-cookie"]
 };
 
 app.use(cors(config));
