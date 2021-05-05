@@ -52,8 +52,8 @@ app.set('trust proxy', 1);
 
 app.use(session({
     cookie: {
-        domain: 'api.426twitter20.com',
-        // sameSite: 'none',
+        domain: '426twitter20.com',
+        sameSite: 'none',
         httpOnly: false,
         secure: true,
         maxAge: 5184000000
