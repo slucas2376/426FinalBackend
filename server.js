@@ -60,8 +60,7 @@ app.use(expressSession({
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
     saveUninitialized: false,
-    proxy: true, // true for heroku
-
+    proxy: true // true for heroku
 }));
 
 const cookieSession = require('cookie-session');
