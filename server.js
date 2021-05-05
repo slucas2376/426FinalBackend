@@ -55,7 +55,7 @@ app.use(expressSession({
         sameSite: 'none',
         secure: true,
         maxAge: 5184000000
-    }
+    },
     name: "defNotTwitterSessionCookie",
     secret: "coronavirus really needs to just Not(tm)",
     resave: false,
