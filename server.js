@@ -99,17 +99,17 @@ app.get('/login', (req, res) => {
     if (loginData.password == password) {
         // successful login
         console.log("password correct; starting login process");
-        req.session.regenerate(() => {});
+        // req.session.regenerate(() => {});
         console.log("logging in for: " + userId + " | " + req.session.user + " logged in");
         console.log("property did not exist; attempting initialization on user: " + userId);
         //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
-        req.session.user = userId;
+        // req.session.user = userId;
         console.log(req.session);
         console.log("initialized for user " + req.session.user);
-        req.session.save((err) => {res.send(`${userId}`)});
-        //res.send(`${User.findById(userId)}`);
+        // req.session.save((err) => {res.send(`${userId}`)});
+        res.send(`${userId}`);
         return;
-    }
+    };
     res.status(403).send("403 forbidden: username or password incorrect");
 });
 
