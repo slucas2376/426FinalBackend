@@ -40,6 +40,7 @@ body:
 
 Post requests to https://comp426finalbackendactual2.herokuapp.com/tweet with body below will add a new tweet with the appropriate properties and return a full JSON tweet object.
 body:
+        userId: A string containing the currently-logged-in user's ID.
 		type: A string containing the tweet's type. valid types are "tweet", "retweet", and "reply"
 		body: A string containing the tweet's text body. Replies and tweets have a minimum length of 1, retweets have a minimum length of 0. All types have a maximum length of 280.
 		(optional) parentId: An int containing the ID of the parent tweet. Only include if type is a retweet or reply.
@@ -73,7 +74,7 @@ body: N/A
 
 Login/userbase interaction systems:
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back true
+Post requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back a string containing the successful user ID.
 body:
 		userId: A string containing the account ID/login name of the account attempting to log in.
 		password: A string containing the user's password input.
@@ -120,6 +121,7 @@ body: N/A
 
 Put requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will update a stored User object if the following fields are included in the body of the request. If successful, it will send back a UserView object of the user in question. Request will be denied unless the currently-logged-in user is an admin account or is logged in on the account with ID :id.
 body:
+        userId: A string containing the user ID of the currently logged in user.
 		displayName: A string containing the user's desired new display name. Max length 32 characters. If this field should not be changed, its value should be equal to the original value.
 		password: A string containing the user's desired new password. Max length 16 characters. If this field should not be changed, its value should be equal to the original value.
 		avatar: A string containing a link to the user's desired new avatar. Max length 120 characters. If this field should not be changed, its value should be equal to the original value.
