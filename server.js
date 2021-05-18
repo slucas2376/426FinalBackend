@@ -472,7 +472,7 @@ app.post('/tweets', (req, res) => {
     if (type != "tweet" && type != "retweet" && type != "reply") {res.status(400).send("400: invalid tweet type"); return;}
     // if tweet is reply or retweet, set proper parent ID
     if (!(type == "tweet")) {parentId = req.body.parentId}
-    let t = Tweet.create(currUser, type, body, parentId, mediaType, mediaId);
+    let t = Tweet.create(currUser.id, type, body, parentId, mediaType, mediaId);
     // if (t == null) {res.status(400).send("400: Bad Request")}
     // if tweet is reply, increment parent's replyCount
     if (type == "reply") {
@@ -482,9 +482,9 @@ app.post('/tweets', (req, res) => {
     // if tweet is retweet, increment parent's retweetCount
     if (type == "retweet") {
         Tweet.retweetCountIncrement(parentId);
-        User.retweet(currUser, parentId);
+        User.retweet(currUser.id, parentId);
     }
-    User.postTweet(currUser, t.id);
+    User.postTweet(currUser.id, t.id);
     return res.json(t);
 });
 
@@ -532,7 +532,7 @@ app.put('/tweets/:id', (req, res) => {
         res.status(403).send("403 forbidden")
         return;
     }
-    if (currUser == t.userId || currUser.type == "admin"){
+    if (currUser.id == t.userId || currUser.type == "admin"){
         if (t == null || t == undefined || t.isDeleted || t == {}) {
             res.status(404).send("404: Tweet could not be found.");
             return;
