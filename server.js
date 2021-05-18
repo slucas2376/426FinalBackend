@@ -203,6 +203,7 @@ app.get('/users/:id', (req, res) => {
     }*/
     if (targetUser != {} || targetUser != undefined || targetUser != null) {
         res.json(User.makeView(targetUser));
+        return;
     }
     res.status(404).send("404: user not found");
 })
