@@ -329,7 +329,7 @@ app.get('/tweets/user/likes/:userId', (req, res) => {
     if (user == {}) {res.status(404).send("404: user not found"); return;};
     let readArr = [];
     readArr = user.likedTweets.map(e => e)
-    if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
+    if (readArr.length == 0) {res.send([]); return;}
     let current = readArr.length - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
