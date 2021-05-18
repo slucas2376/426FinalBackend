@@ -360,7 +360,7 @@ app.get('/tweets/user/posts/:userId', (req, res) => {
     if (user == {}) {res.status(404).send("404: user not found"); return;};
     let readArr = [];
     readArr = user.postedTweets.map(e => e);
-    if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
+    if (readArr.length == 0) {res.send([]); return;}
     let current = readArr.length - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
@@ -391,7 +391,7 @@ app.get('/tweets/user/retweets/:userId', (req, res) => {
     if (user == {}) {res.status(404).send("404: user not found"); return;};
     let readArr = [];
     readArr = user.hasRetweeted.map(e => e);
-    if (readArr.length == 0) {res.status(404).send("404: user has no such tweets."); return;}
+    if (readArr.length == 0) {res.send([]); return;}
     let current = readArr.length - 1;
     let last = current - limit;
     if (last < 0) {last = 0;}
@@ -424,7 +424,7 @@ app.get('/tweets/:id/replies', (req, res) => {
         return;};
     let readArr = parent.replyIds.map(e => e);
     if (readArr.length == 0) {
-        res.status(404).send("404: tweet has no replies.");
+        res.send([]);
         return;}
     let current = 0;
     let last = current + limit;
