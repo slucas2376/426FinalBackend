@@ -546,12 +546,13 @@ app.put('/tweets/:id', (req, res) => {
         if (body.length > 280) {res.status(400).send("400 bad request: tweet body too long"); return;}
         if (t.type == "tweet" || t.type == "reply") {if (body.length == 0) {res.status(400).send("400 bad request: tweet body too short"); return;}}
         if (mediaType == "video" && mediaId != "") {
-            if (mediaId.indexOf("http://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(29, 40)}
+            /*if (mediaId.indexOf("http://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(29, 40)}
             else if (mediaId.indexOf("https://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(30, 41)}
-            else if (mediaId.length == 11) {t.videoId = mediaId}
-            if (t.videoId != "") {t.mediaType = "video"}
+            else if (mediaId.length == 11) {t.videoId = mediaId;}
+            if (t.videoId != "") {t.mediaType = "video"; t.imageLink = "";}*/
+            t.mediaType = "video"; t.videoId = mediaId; t.imageLink = "";
         }
-        if (mediaType == "image" && mediaId != "") {t.mediaType = "image"; t.imageLink = mediaId;}
+        if (mediaType == "image" && mediaId != "") {t.mediaType = "image"; t.imageLink = mediaId; t.videoId = "";}
         if (mediaType == "none") {t.mediaType = "none"; t.videoId = ""; t.imageLink = "";}
         t.body = body;
         t.edit();
