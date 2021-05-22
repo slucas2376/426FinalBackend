@@ -476,14 +476,17 @@ app.post('/tweets', (req, res) => {
     // if (t == null) {res.status(400).send("400: Bad Request")}
     // if tweet is reply, increment parent's replyCount
     if (type == "reply") {
+        console.log("REPLY: parent " + parentId)
         Tweet.replyCountIncrement(parentId);
         Tweet.reply(t.id, parentId)
     }
     // if tweet is retweet, increment parent's retweetCount
     if (type == "retweet") {
+        console.log("RETWEET: parent " + parentId)
         Tweet.retweetCountIncrement(parentId);
         User.retweet(currUser.id, parentId);
     }
+    console.log("tweet " + t.id + " posted")
     User.postTweet(currUser.id, t.id);
     return res.json(t);
 });
