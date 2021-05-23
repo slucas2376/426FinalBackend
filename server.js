@@ -471,7 +471,7 @@ app.post('/tweets', (req, res) => {
     // type verification
     if (type != "tweet" && type != "retweet" && type != "reply") {res.status(400).send("400: invalid tweet type"); return;}
     // if tweet is reply or retweet, set proper parent ID
-    if (!(type == "tweet")) {parentId = req.body.parentId}
+    if (!(type == "tweet")) {parentId = req.body.parentId.toString()}
     let t = Tweet.create(currUser.id, type, body, parentId, mediaType, mediaId);
     // if (t == null) {res.status(400).send("400: Bad Request")}
     // if tweet is reply, increment parent's replyCount
