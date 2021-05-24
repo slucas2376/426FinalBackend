@@ -298,15 +298,14 @@ app.get('/tweet/:id', (req, res) => {
 });
 
 app.get('/tweets/recent', (req, res) => {
-    // sends out array of (limit) most recent Tweet objects in descending order of posting
+    // sends out array of (limit) most recent Tweet objects in descending order of posting, excluding replies
     let limit = 75;
     let current = Tweet.nextId - 1;
     let last = current - limit;
     let arr = [];
     while (limit > 0) {
         let t = Tweet.findById(current);
-        if (!t.isDeleted && !(t == {})) {
-            // generate the usertweet object for current
+        if (!t.isDeleted && !(t == {}) && (t.type != "reply")) {
             t = Tweet.generateView(t.id);
             // no body to read logged-in user from GET request
             /*if (req.body.userId = t.userId) { t.isMine = true; }
