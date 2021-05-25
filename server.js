@@ -220,7 +220,7 @@ app.put('/users/:id/', (req, res) => {
             return;
         }
         let displayName = req.body.displayName;
-        let password = req.body.password;
+        let password = req.body.updatedPassword;
         let avatar = req.body.avatar;
         let desc = req.body.profileDescription;
         if (displayName.length == 0) {displayName = targetUser.displayName};
