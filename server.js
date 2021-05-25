@@ -208,10 +208,12 @@ app.get('/users/:id', (req, res) => {
     res.status(404).send("404: user not found");
 })
 
+
 app.put('/users/:id/', (req, res) => {
     // sends true if successful update of user data
     let currUser = User.findById(req.body.userId);
-    if ((currUser.id == req.params.id) || (currUser.type == "admin")) {
+    let currentPassword = req.body.currentPassword;
+    if ((currUser.id == req.params.id) && (currentPassword == currUser.password)) {
         let targetUser = User.findById(req.params.id);
         if (targetUser == {}) {
             res.status(404).send("404: user not found")
