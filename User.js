@@ -1,31 +1,24 @@
 const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 class User {
-    constructor(id, displayName, password, avatar, profileDescription, type = "user")
+    constructor(id, displayName, password, avatar, profileDescription)
     {this.id = id;
     this.displayName = displayName;
     this.password = password;
     this.avatar = avatar;
     this.profileDescription = profileDescription;
-    this.type = type;
     this.likedTweets = [];
     this.postedTweets = [];
     this.hasRetweeted = [];
     };
 }
 
-User.create = (id, displayName, password, avatar = "[default link]", profileDescription = "Your description goes here.") => {
+User.create = (id, displayName, password, avatar = "https://i.imgur.com/tdi3NGa.png", profileDescription = "Your description goes here.") => {
     let u = new User(id, displayName, password, avatar, profileDescription);
     userData.set(u.id.toString(), u);
     return u;
 }
 
-User.createAdmin = (id, displayName, password, avatar = "[default link]", profileDescription = "Your description goes here.") => {
-    let u = new User(id, displayName, password, avatar, profileDescription, "admin");
-    u.type = "admin";
-    userData.set(u.id.toString(), u);
-    return u;
-}
 
 User.update = (id, displayName, password, avatar, profileDescription) => {
     let old = User.findById(id);
@@ -33,19 +26,11 @@ User.update = (id, displayName, password, avatar, profileDescription) => {
     let oldLikes = old.likedTweets;
     let oldPosts = old.postedTweets;
     let oldRetweets = old.hasRetweeted;
-    if (old.type == "admin") {
-        let a = new User(id, displayName, password, avatar, profileDescription, "admin")
-        a.likedTweets = oldLikes;
-        a.postedTweets = oldPosts;
-        a.hasRetweeted = oldRetweets;
-        userData.set(id, a);
-    } else {
-        let u = new User(id, displayName, password, avatar, profileDescription)
-        u.likedTweets = oldLikes;
-        u.postedTweets = oldPosts;
-        u.hasRetweeted = oldRetweets;
-        userData.set(id, u);
-    };
+    let u = new User(id, displayName, password, avatar, profileDescription)
+    u.likedTweets = oldLikes;
+    u.postedTweets = oldPosts;
+    u.hasRetweeted = oldRetweets;
+    userData.set(id, u);
 }
 
 User.makeView = (userObj) => {
@@ -54,12 +39,11 @@ User.makeView = (userObj) => {
     let viewDisplayName = userObj.displayName;
     let viewAvatar = userObj.avatar;
     let viewDescription = userObj.profileDescription;
-    let viewType = userObj.type;
     let viewPosted = userObj.postedTweets;
     let viewLiked = userObj.likedTweets;
     let viewRetweeted = userObj.hasRetweeted;
     return {id: viewId, displayName: viewDisplayName, avatar: viewAvatar, profileDescription: viewDescription,
-        type: viewType, tweetsLiked: viewLiked, tweetsPosted: viewPosted, hasRetweeted: viewRetweeted
+        tweetsLiked: viewLiked, tweetsPosted: viewPosted, hasRetweeted: viewRetweeted
     }
 }
 

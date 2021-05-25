@@ -2,8 +2,6 @@ const express = require('express');
 
 const cors = require('cors');
 
-//const cookieParser = require('cookie-parser')
-
 const app = express();
 
 // let corsOrigin = "http://localhost:3000";
@@ -12,7 +10,6 @@ const app = express();
 let corsOrigin = "https://426twitter20.com";
 //let corsOrigin = "https://slucas2376.github.io"
 
-//app.use(cookieParser());
 
 const config = {
     origin: corsOrigin,
@@ -23,61 +20,16 @@ const config = {
 
 app.use(cors(config));
 
-/*
-app.use(cors({
-    origin: corsOrigin,
-    credentials: true
-}));
-*/
-
-/*
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
-*/
-
 const Tweet = require('./Tweet.js');
 
 const User = require('./User.js');
 const session = require('express-session');
-// const userData = require('data-store')({path: process.cwd() + '/data/users.json'});
 
 app.use(express.json());
 app.use(express.urlencoded());
 
 
-
 app.set('trust proxy', 1);
-
-app.use(session({
-    cookie: {
-        domain: '426twitter20.com',
-        sameSite: 'none',
-        httpOnly: false,
-        secure: true,
-        maxAge: 5184000000
-    },
-    name: "defNotTwitterSessionCookie",
-    secret: "coronavirus really needs to just Not(tm)",
-    resave: false,
-    saveUninitialized: false,
-    proxy: true // true for heroku
-}));
-
-// const cookieSession = require('cookie-session');
-
-/*app.use(cookieSession({
-    name: "defNotTwitterSessionCookie",
-    secret: "coronavirus really needs to just Not(tm)",
-    secureProxy: true,
-    cookie: {
-        secure: true,
-        maxAge: 5184000000,
-        sameSite: "none",
-        path: "/"
-    }
-}))*/
 
 
 
@@ -86,7 +38,6 @@ app.options('/login', cors(config));
 app.post('/login', (req, res) => {
     // requires parameters userId and password, sends true if successful
     // lmao what's an """encryption""", seriously don't use passwords you care about here
-    // maybe add logic to check if a user is already logged in, then send 400 already logged in?
     let userId = req.body.userId;
     if (userId == "") {res.status(400).send("400 bad request: invalid username"); return;}
     let password = req.body.password;
@@ -97,16 +48,6 @@ app.post('/login', (req, res) => {
         return;
     }
     if (loginData.password == password) {
-        // successful login
-        console.log("password correct; starting login process");
-        // req.session.regenerate(() => {});
-        console.log("logging in for: " + userId);
-        // console.log("property did not exist; attempting initialization on user: " + userId);
-        //res.cookie('user', userId, {expires: new Date(Date.now() + 9999999), httpOnly: false});
-        // req.session.user = userId;
-        // console.log(req.session);
-        // console.log("initialized for user " + req.session.user);
-        // req.session.save((err) => {res.send(`${userId}`)});
         res.send(`${userId}`);
         return;
     };
@@ -114,13 +55,9 @@ app.post('/login', (req, res) => {
 });
 
 // as-is this method is kinda useless? it basically just prints user logged out on the console;
-// remove if localstorage is used for session
 app.options('/logout', cors(config));
 app.get('/logout', (req, res) => {
-    // logs out current user, sends back true
-    // delete req.session.user;
     console.log("user logged out");
-    // req.session.destroy();
     res.json(true);
     return;
 })
@@ -133,10 +70,11 @@ app.post('/register', (req, res) => {
     let displayName = req.body.displayName;
     let password = req.body.password;
     let avatar = req.body.avatar;
-    if (userId.length == 0 || displayName.length == 0 || password.length == 0 || avatar.length == 0) {
+    if (userId.length == 0 || displayName.length == 0 || password.length == 0) {
         res.status(400).send("400 bad request: parameter too short");
         return;
     }
+    if (avatar == "") {avatar = "https://i.imgur.com/tdi3NGa.png";}
     if (User.findById(userId).id == userId) { res.status(400).send("400 bad request: user already exists") };
     if (userId.length > 16 || displayName.length > 32 || password.length > 24 || avatar.length > 300) {
         res.status(400).send("400 bad request: parameter too long");
@@ -159,48 +97,14 @@ app.get('/users/idnames/:parameter', (req, res) => {
             arr.push(u);
         }
     }
-    //res.json(pairs.map(e => e.userId));
     res.json(arr);
     return;
 })
-
-app.get('/users', (req, res) => {
-    // if logged in as admin, gets list of all user objects
-    let currUser = User.findById(req.body.userId);
-    if (currUser.type == "admin") {
-        res.json(User.getAll());
-        return;
-    }
-    res.status(403).send("403 forbidden");
-    // nonfunctional get all user view objects, for not admin
-    /*    res.json(User.getAllView());
-        return;*/
-})
-
-// deprecated
-/*app.options('/users/current', cors(config));
-app.get('/users/current', (req, res) => {
-
-    console.log("current user is: " + req.session.user);
-    let user = req.session.user;
-    console.log(user);
-    let u = User.findById(user);
-    console.log(u);
-    res.json(u);
-})*/
 
 app.options('/users/:id', cors(config));
 app.get('/users/:id', (req, res) => {
     // sends JSON object User for the relevant id
     let targetUser = User.findById(req.params.id);
-    /*let currUser = User.findById(req.body.userId);
-    if ((currUser == targetUser.id) || (currUser.type == "admin")) {
-        res.json(targetUser);
-        return;}
-    if (targetUser != null && targetUser != undefined && targetUser != {}) {
-        res.json(User.makeView(targetUser));
-        return;
-    }*/
     if (targetUser != {} || targetUser != undefined || targetUser != null) {
         res.json(User.makeView(targetUser));
         return;
@@ -227,7 +131,7 @@ app.put('/users/:id/', (req, res) => {
         if (password.length == 0) {password = targetUser.password};
         if (avatar.length == 0) {avatar = targetUser.avatar};
         if (desc.length == 0) {desc = targetUser.profileDescription}
-        if (displayName.length > 32 || password.length > 24 || avatar.length > 300) {
+        if (displayName.length > 32 || password.length > 24 || avatar.length > 120 || desc.length > 300) {
             res.status(400).send("400 bad request: parameter too long");
             return;
         }
@@ -237,29 +141,6 @@ app.put('/users/:id/', (req, res) => {
     }
     else {res.status(403).send("403 forbidden");}
 })
-
-// delete version made assuming current user in cookies or something
-/*app.delete('/users/:id', (req, res) => {
-    // deleting user; need to either be logged in as that user or as admin, sends back true on success
-    // also deletes all user-posted tweets
-    let currUser = User.findById(req.body.userId);
-    if ((currUser.id == req.params.id) || (currUser.type == "admin")) {
-        let tweets = User.findById(req.params.id).postedTweets;
-        let t = "";
-        for (t of tweets) {
-            Tweet.delete(t);
-        }
-        let temp = User.delete(req.params.id);
-        // req.session.regenerate(() => {});
-        if (temp) {res.json(true);
-            return;}
-        res.status(400).send("400 bad request: user could not be deleted");
-        return;
-    }
-    if ((currUser == undefined) || (currUser == null)) { res.status(404).send("404: no user found"); return;};
-    res.status(403).send("403 forbidden");
-
-})*/
 
 app.delete('/users/:id', (req, res) => {
     let tweets = User.findById(req.params.id).postedTweets;
@@ -291,10 +172,6 @@ app.get('/tweet/:id', (req, res) => {
     }
     if (t.isDeleted) {res.json("Tweet has been deleted."); return;}
     t = Tweet.generateView(t.id);
-    // no body to read logged-in user from GET request
-    /*if (req.body.userId = t.userId) { t.isMine = true; }
-    let likedTweets = User.findById(req.body.userId).likedTweets;
-    if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }*/
     res.json(t);
     return;
 });
@@ -309,10 +186,6 @@ app.get('/tweets/recent', (req, res) => {
         let t = Tweet.findById(current);
         if (!t.isDeleted && !(t == {}) && (t.type != "reply")) {
             t = Tweet.generateView(t.id);
-            // no body to read logged-in user from GET request
-            /*if (req.body.userId = t.userId) { t.isMine = true; }
-            let likedTweets = User.findById(req.body.userId).likedTweets;
-            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }*/
             arr.push(t);
             limit -= 1;
         }
@@ -338,12 +211,7 @@ app.get('/tweets/user/likes/:userId', (req, res) => {
     while (limit > 0) {
         let t = Tweet.findById(readArr[current]);
         if (!t.isDeleted && !(t == {})) {
-            // generate the usertweet object for current
             t = Tweet.generateView(t.id);
-            // no body to read logged-in user from GET request
-            /*if (req.body.userId = t.userId) { t.isMine = true; }
-            let likedTweets = User.findById(req.body.userId).likedTweets;
-            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }*/
             arr.push(t);
             limit -= 1;
         }
@@ -369,12 +237,7 @@ app.get('/tweets/user/posts/:userId', (req, res) => {
     while (limit > 0) {
         let t = Tweet.findById(readArr[current]);
         if (!t.isDeleted && !(t == {})) {
-            // generate the usertweet object for current
             t = Tweet.generateView(t.id);
-            // no body to read logged-in user from GET request
-            /*if (req.body.userId = t.userId) { t.isMine = true; }
-            let likedTweets = User.findById(req.body.userId).likedTweets;
-            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }*/
             arr.push(t);
             limit -= 1;
         }
@@ -400,12 +263,7 @@ app.get('/tweets/user/retweets/:userId', (req, res) => {
     while (limit > 0) {
         let t = Tweet.findById(readArr[current]);
         if (!t.isDeleted && !(t == {})) {
-            // generate the usertweet object for current
             t = Tweet.generateView(t.id);
-            // no body to read logged-in user from GET request
-            /*if (req.body.userId = t.userId) { t.isMine = true; }
-            let likedTweets = User.findById(req.body.userId).likedTweets;
-            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }*/
             arr.push(t);
             limit -= 1;
         }
@@ -434,12 +292,7 @@ app.get('/tweets/:id/replies', (req, res) => {
     while (current <= last) {
         let t = Tweet.findById(readArr[current]);
         if (!t.isDeleted && !(t == {})) {
-            // generate the usertweet object for current
             t = Tweet.generateView(t.id);
-            // no body to read logged-in user from in GET request
-            /*if (req.body.userId = t.userId) { t.isMine = true; }
-            let likedTweets = User.findById(req.body.userId).likedTweets;
-            if (likedTweets != undefined && likedTweets.includes(t.id)) { t.isLiked = true; }*/
             arr.push(t);
             limit -=1;
         }
@@ -466,22 +319,16 @@ app.post('/tweets', (req, res) => {
     if (req.body.mediaType == "video") {mediaType = "video";};
     let mediaId = "";
     if (mediaType == "video" || mediaType == "image") {mediaId = req.body.mediaId;};
-    // body length verification
     if (body.length > 280) {res.status(400).send("400: tweet is too long"); return;};
     if (type != "retweet" && body.length == 0) {res.status(400).send("400: tweets and replies must have a body"); return;};
-    // type verification
     if (type != "tweet" && type != "retweet" && type != "reply") {res.status(400).send("400: invalid tweet type"); return;}
-    // if tweet is reply or retweet, set proper parent ID
     if (!(type == "tweet")) {parentId = req.body.parentId.toString()}
     let t = Tweet.create(currUser.id, type, body, parentId, mediaType, mediaId);
-    // if (t == null) {res.status(400).send("400: Bad Request")}
-    // if tweet is reply, increment parent's replyCount
     if (type == "reply") {
         console.log("REPLY: parent " + parentId)
         Tweet.replyCountIncrement(parentId);
         Tweet.reply(t.id, parentId)
     }
-    // if tweet is retweet, increment parent's retweetCount
     if (type == "retweet") {
         console.log("RETWEET: parent " + parentId)
         Tweet.retweetCountIncrement(parentId);
@@ -504,15 +351,9 @@ app.post('/tweets/:id/like', (req, res) => {
         return;
     }
     if (tweet.isDeleted) {
-        // User.unlikeTweet(req.session.user, req.params.id);
         res.status(400).send("400 bad request: cannot like a deleted tweet.")
         return;
     }
-    // now handled on frontend
-    /*if (tweet.userId == currUser.id) {
-        res.status(400).send("400 bad request: cannot like own tweet");
-        return;
-    }*/
     if (currUser.likedTweets.includes(req.params.id)) {
         User.unlikeTweet(currUser.id, req.params.id);
         Tweet.likeCountDecrement(req.params.id);
@@ -528,7 +369,7 @@ app.post('/tweets/:id/like', (req, res) => {
 })
 
 app.put('/tweets/:id', (req, res) => {
-    // editing tweets; only available for user who posted tweet or admins
+    // editing tweets; only available for user who posted tweet
     let currUser = User.findById(req.body.userId);
     let t = Tweet.findById(req.params.id);
     // user filtering
@@ -536,7 +377,7 @@ app.put('/tweets/:id', (req, res) => {
         res.status(403).send("403 forbidden")
         return;
     }
-    if (currUser.id == t.userId || currUser.type == "admin"){
+    if (currUser.id == t.userId){
         if (t == null || t == undefined || t.isDeleted || t == {}) {
             res.status(404).send("404: Tweet could not be found.");
             return;
@@ -550,10 +391,6 @@ app.put('/tweets/:id', (req, res) => {
         if (body.length > 280) {res.status(400).send("400 bad request: tweet body too long"); return;}
         if (t.type == "tweet" || t.type == "reply") {if (body.length == 0) {res.status(400).send("400 bad request: tweet body too short"); return;}}
         if (mediaType == "video" && mediaId != "") {
-            /*if (mediaId.indexOf("http://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(29, 40)}
-            else if (mediaId.indexOf("https://www.youtube.com/embed/" == 0)) {t.videoId = mediaId.slice(30, 41)}
-            else if (mediaId.length == 11) {t.videoId = mediaId;}
-            if (t.videoId != "") {t.mediaType = "video"; t.imageLink = "";}*/
             t.mediaType = "video"; t.videoId = mediaId; t.imageLink = "";
         }
         if (mediaType == "image" && mediaId != "") {t.mediaType = "image"; t.imageLink = mediaId; t.videoId = "";}
@@ -566,23 +403,12 @@ app.put('/tweets/:id', (req, res) => {
     res.status(403).send("403 forbidden")
 })
 
-// okay so our options here are to keep the delete request type and use frontend logic to only send the req if current
-// user is logged in, or to change the req type to post or put
 app.delete('/tweets/:id', (req, res) => {
-    // deleting tweets; only available for user who posted tweet or admins
     let t = Tweet.findById(req.params.id);
-    /*let currUser = User.findById(req.body.userId);*/
     if (t == null || t == undefined || t == {}) {
         res.status(404).send("404: Tweet could not be found.");
         return;
     }
-/*    if (currUser == t.userId || currUser.type == "admin"){
-        if (t.isDeleted) {res.status(400).send("400 bad request: tweet already deleted.")}
-        User.deleteTweet(t.userId, t.id);
-        Tweet.delete(t.id);
-        res.json(true);
-        return;
-    }*/
     if (t.isDeleted) {res.status(400).send("400 bad request: tweet already deleted.")}
     User.deleteTweet(t.userId, t.id);
     Tweet.delete(t.id);
@@ -595,6 +421,6 @@ app.delete('/tweets/:id', (req, res) => {
 const port = (process.env.PORT || 3030);
 app.listen(port, () => {
     console.log('server running on port ' + port);
-    //User.createAdmin("sclu", "Dev Sophie", "426final", "https://imgur.com/572zTSG.jpg", "mood: aaaaaaaaaaaaaaa");
-    //User.create("test", "test account", "test", "test avatar", "test desc");
+    //User.create("sclu", "Dev Sophie", "426final", "https://imgur.com/572zTSG.jpg", "mood: aaaaaaaaaaaaaaa");
+    //User.create("test", "test account", "test", "https://i.imgur.com/tdi3NGa.png", "test desc");
 })

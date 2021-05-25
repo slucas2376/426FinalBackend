@@ -1,11 +1,10 @@
 {
   "sclu": {
     "id": "sclu",
-    "displayName": "Dev Sophie",
+    "displayName": "only mostly dead inside",
     "password": "426final",
     "avatar": "https://imgur.com/572zTSG.jpg",
-    "profileDescription": "Your description goes here.",
-    "type": "admin",
+    "profileDescription": "current mood: aaaaaaaaaaaaaaaaaa",
     "likedTweets": [],
     "postedTweets": [
       "0",
@@ -18,9 +17,8 @@
     "id": "test",
     "displayName": "test account",
     "password": "test",
-    "avatar": "test avatar",
+    "avatar": "https://i.imgur.com/tdi3NGa.png",
     "profileDescription": "test desc",
-    "type": "user",
     "likedTweets": [],
     "postedTweets": [
       "3",
@@ -36,7 +34,6 @@
     "password": "conleche101",
     "avatar": "thelastairbender",
     "profileDescription": "Your description goes here.",
-    "type": "user",
     "likedTweets": [],
     "postedTweets": [],
     "hasRetweeted": []

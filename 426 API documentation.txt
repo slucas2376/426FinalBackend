@@ -2,12 +2,30 @@ API for Definitely Not Twitter
 
 Tweet systems:
 
+The Tweet JSON object has the following fields:
+    "isEdited": false if tweet has not been edited, true if tweet has been edited
+    "editedAt": null if tweet has not been edited, otherwise displays server timestamp generated when tweet was last edited
+    "likeCount": number of likes on tweet
+    "replyCount": number of replies to tweet
+    "retweetCount": number of retweets on tweet
+    "replyIds": array of tweet IDs for each reply in ascending order of age
+    "id": unique numerical identifier
+    "userId": user ID of user who posted tweet
+    "type": tweet, retweet, or reply
+    "body": text of tweet
+    "parentId": tweet ID of tweet being retweeted or replied to
+    "createdAt": timestamp generated when tweet was first posted
+    "isDeleted": false if tweet has not been deleted, true if tweet has been deleted; deleted tweets have only this field and the id field
+    "mediaType": none, video, or image
+    "videoId": a YouTube embed link or 11-character video ID
+    "imageLink": a direct image link
+
 Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/all will return a JSON object array of all tweet IDs on the server
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/recent will return a JSON object array of up to 75 tweets in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted.
+Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/recent will return a JSON object array of up to 75 tweets and retweets, but not replies, in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted.
 body: N/A
 
 
@@ -33,8 +51,7 @@ body: N/A
 
 
 Get requests to https://comp426finalbackendactual2.herokuapp.com/tweet/:id will get a single JSON tweet object with the integer ID :id
-body:
-		id: An int containing the tweet's ID.
+body: N/A
 
 
 
@@ -47,8 +64,8 @@ body:
 		(optional) mediaType: A string containing the type of media to embed in the tweet. Options are "none", "image", and "video".
 		(optional) mediaId: A string containing either a direct image link, if mediaType is "image", or if mediaType is "video", a YouTube embed link or 11-character video ID. Examples of YouTube URL and ID below.
 
-		[embed link: https://www.youtube.com/embed/M7lc1UVf-VE]
-		[video ID: M7lc1UVf-VE]
+		[embed link example: https://www.youtube.com/embed/M7lc1UVf-VE]
+		[video ID example: M7lc1UVf-VE]
 
 
 
@@ -57,26 +74,37 @@ body:
 		body: A string containing the tweet's new text body. Maximum length 280 characters, minimum 1 for tweets and replies, 0 for retweets. If no changes are desired, request should include this field as a blank string.
 		mediaType: A string containing the type of media to embed in the tweet. Options are "none", "image", and "video". If no changes in type are desired, request should include this field as a blank string.
 		mediaId: A string containing either a direct image link, if mediaType is "image", or if mediaType is "video", a YouTube embed link or 11-character video ID. If no changes in media ID are desired, request should include this field as a blank string.
+		userId: A string containing the user ID of the user currently logged in. For a successful edit, this must match the user who posted the tweet.
 
 
 
 Post requests to https://comp426finalbackendactual2.herokuapp.com/tweets/:id/like will unlike the tweet with ID :id if the user has liked it, and will like the tweet if the user has not liked it. Response will be true if the operation was successful.
-body: N/A
+body:
+        userId: A string containing the user ID of the user currently logged in.
 
 
 
 
 Delete requests to https://comp426finalbackendactual2.herokuapp.com/tweets/:id will replace the Tweet object at ID :id with an object with fields id (holding the tweet ID) and isDeleted, holding boolean true. If successful, the response will be a boolean true.
-Tweets can only be deleted if logged in on the account that posted them, or logged in on an admin account.
 body: N/A
 
 
 
 Login/userbase interaction systems:
 
-Post requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, set a cookie containing the logged-in user ID and session state, and send back a string containing the successful user ID.
+The User JSON object has the following fields:
+    "id": the user ID, by which the account is identified and used to log in
+    "displayName": the display name the user wishes to use on the platform
+    "password": the account's password
+    "avatar": an image link to the account's avatar
+    "profileDescription": a description of the user
+    "likedTweets": an array of all tweets liked by the user, with the first liked at index 0
+    "postedTweets": an array of all tweets posted by the user, with the oldest at index 0
+    "hasRetweeted": an array of all tweets retweeted by the user, with the first retweeted at index 0
+
+Post requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, send back a string containing the successful user ID.
 body:
-		userId: A string containing the account ID/login name of the account attempting to log in.
+		userId: A string containing the user ID of the account attempting to log in.
 		password: A string containing the user's password input.
 
 
@@ -90,16 +118,11 @@ body:
 		userId: A string containing the user's account ID which they will use to log in. Max length 16 characters.
 		displayName: A string containing the user's desired display name. Max length 32 characters.
 		password: A string containing the user's desired password. Max length 24 characters.
-		avatar: A string containing a link to the user's desired avatar. Will default to [default image link] if field is not provided. Max length 120 characters.
+		avatar: A string containing a link to the user's desired avatar. Will default to https://i.imgur.com/tdi3NGa.png if field is not provided. Max length 120 characters.
 
 
 
-Delete requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will delete the user account and all tweets it has posted, and log the user out.
-body: N/A
-
-
-
-Get requests to https://comp426finalbackendactual2.herokuapp.com/users will only go through if currently logged in as an admin. Response will be a JSON object containing all User objects in the database as key-value pairs.
+Delete requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will delete the user account and all tweets it has posted.
 body: N/A
 
 
@@ -109,7 +132,7 @@ body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will return a JSON User object if logged in as an admin, or as the user with ID :id. Otherwise, the response will contain a JSON UserView object, which is a User object without the password field.
+Get requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will return a JSON UserView object, which is a User object without the password field.
 body: N/A
 
 
@@ -121,8 +144,9 @@ body: N/A
 
 Put requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will update a stored User object if the following fields are included in the body of the request. If successful, it will send back a UserView object of the user in question. Request will be denied unless the currently-logged-in user is an admin account or is logged in on the account with ID :id.
 body:
-        userId: A string containing the user ID of the currently logged in user.
-		displayName: A string containing the user's desired new display name. Max length 32 characters. If this field should not be changed, its value should be equal to the original value.
-		password: A string containing the user's desired new password. Max length 16 characters. If this field should not be changed, its value should be equal to the original value.
-		avatar: A string containing a link to the user's desired new avatar. Max length 120 characters. If this field should not be changed, its value should be equal to the original value.
-		profileDescription: A string containing the user's desired new profile description. Max length ??? characters. If this field should not be changed, its value should be an empty string.
+        userId: A string containing the user ID of the currently logged in user. Must match the :id in the URL.
+        currentPassword: A string containing the user's current password. Must match the password stored on the server.
+		displayName: A string containing the user's desired new display name. Max length 32 characters. If this field should not be changed, its value should be an empty string.
+		updatedPassword: A string containing the user's desired new password. Max length 16 characters. If this field should not be changed, its value should be an empty string.
+		avatar: A string containing a link to the user's desired new avatar. Max length 120 characters. If this field should not be changed, its value should be an empty string.
+		profileDescription: A string containing the user's desired new profile description. Max length 300 characters. If this field should not be changed, its value should be an empty string.

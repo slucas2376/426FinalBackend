@@ -66,8 +66,6 @@ Tweet.generateView = (tweetId) => {
         let v = {
             ...t
         };
-        v.isMine = false;
-        v.isLiked = false;
         return v;
     } else { return t; }
 }
