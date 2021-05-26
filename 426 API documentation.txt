@@ -20,42 +20,42 @@ The Tweet JSON object has the following fields:
     "videoId": a YouTube embed link or 11-character video ID
     "imageLink": a direct image link
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/all will return a JSON object array of all tweet IDs on the server
+Get requests to https://api.426twitter20.com/tweets/all will return a JSON object array of all tweet IDs on the server
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/recent will return a JSON object array of up to 75 tweets and retweets, but not replies, in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted.
+Get requests to https://api.426twitter20.com/tweets/recent will return a JSON object array of up to 75 tweets and retweets, but not replies, in descending order of posting (most recent first). Note that the first tweet posted will have an ID of 0, and IDs increment up by 1 per tweet posted.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/user/likes/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has liked.
+Get requests to https://api.426twitter20.com/tweets/user/likes/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has liked.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/user/posts/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has posted.
+Get requests to https://api.426twitter20.com/tweets/user/posts/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has posted.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/user/retweets/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has retweeted.
+Get requests to https://api.426twitter20.com/tweets/user/retweets/:userId will return a JSON object array of up to 75 tweets in descending order of posting (most recent first) that the user with ID :userId has retweeted.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweets/:id/replies will return a JSON object array of up to 75 tweets in ascending order of posting (least recent first), that are replies to the tweet with ID :id.
+Get requests to https://api.426twitter20.com/tweets/:id/replies will return a JSON object array of up to 75 tweets in ascending order of posting (least recent first), that are replies to the tweet with ID :id.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/tweet/:id will get a single JSON tweet object with the integer ID :id
+Get requests to https://api.426twitter20.com/tweet/:id will get a single JSON tweet object with the integer ID :id
 body: N/A
 
 
 
-Post requests to https://comp426finalbackendactual2.herokuapp.com/tweet with body below will add a new tweet with the appropriate properties and return a full JSON tweet object.
+Post requests to https://api.426twitter20.com/tweet with body below will add a new tweet with the appropriate properties and return a full JSON tweet object.
 body:
         userId: A string containing the currently-logged-in user's ID.
 		type: A string containing the tweet's type. valid types are "tweet", "retweet", and "reply"
@@ -69,7 +69,7 @@ body:
 
 
 
-Put requests to https://comp426finalbackendactual2.herokuapp.com/tweets/:id with request body below will edit the tweet with ID :id with new properties, if applicable, and return a full JSON tweet object with the new properties.
+Put requests to https://api.426twitter20.com/tweets/:id with request body below will edit the tweet with ID :id with new properties, if applicable, and return a full JSON tweet object with the new properties.
 body:
 		body: A string containing the tweet's new text body. Maximum length 280 characters, minimum 1 for tweets and replies, 0 for retweets. If no changes are desired, request should include this field as a blank string.
 		mediaType: A string containing the type of media to embed in the tweet. Options are "none", "image", and "video". If no changes in type are desired, request should include this field as a blank string.
@@ -78,14 +78,14 @@ body:
 
 
 
-Post requests to https://comp426finalbackendactual2.herokuapp.com/tweets/:id/like will unlike the tweet with ID :id if the user has liked it, and will like the tweet if the user has not liked it. Response will be true if the operation was successful.
+Post requests to https://api.426twitter20.com/tweets/:id/like will unlike the tweet with ID :id if the user has liked it, and will like the tweet if the user has not liked it. Response will be true if the operation was successful.
 body:
         userId: A string containing the user ID of the user currently logged in.
 
 
 
 
-Delete requests to https://comp426finalbackendactual2.herokuapp.com/tweets/:id will replace the Tweet object at ID :id with an object with fields id (holding the tweet ID) and isDeleted, holding boolean true. If successful, the response will be a boolean true.
+Delete requests to https://api.426twitter20.com/tweets/:id will replace the Tweet object at ID :id with an object with fields id (holding the tweet ID) and isDeleted, holding boolean true. If successful, the response will be a boolean true.
 body: N/A
 
 
@@ -102,18 +102,18 @@ The User JSON object has the following fields:
     "postedTweets": an array of all tweets posted by the user, with the oldest at index 0
     "hasRetweeted": an array of all tweets retweeted by the user, with the first retweeted at index 0
 
-Post requests to https://comp426finalbackendactual2.herokuapp.com/login with body below will, if login is successful, send back a string containing the successful user ID.
+Post requests to https://api.426twitter20.com/login with body below will, if login is successful, send back a string containing the successful user ID.
 body:
 		userId: A string containing the user ID of the account attempting to log in.
 		password: A string containing the user's password input.
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/logout will log out the currently logged in user and send back true. Works regardless of whether there is a user logged in.
+Get requests to https://api.426twitter20.com/logout will log out the currently logged in user and send back true. Works regardless of whether there is a user logged in.
 
 
 
-Post requests to https://comp426finalbackendactual2.herokuapp.com/register with body below will add a new User object to the users database, and allow for that user to log in.
+Post requests to https://api.426twitter20.com/register with body below will add a new User object to the users database, and allow for that user to log in.
 body:
 		userId: A string containing the user's account ID which they will use to log in. Max length 16 characters.
 		displayName: A string containing the user's desired display name. Max length 32 characters.
@@ -122,27 +122,27 @@ body:
 
 
 
-Delete requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will delete the user account and all tweets it has posted.
+Delete requests to https://api.426twitter20.com/users/:id will delete the user account and all tweets it has posted.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/users/idnames/:parameter will send back a JSON array containing an object for each user whose userId or displayName contains :parameter. These objects have a userId field and a displayName field.
+Get requests to https://api.426twitter20.com/users/idnames/:parameter will send back a JSON array containing an object for each user whose userId or displayName contains :parameter. These objects have a userId field and a displayName field.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will return a JSON UserView object, which is a User object without the password field.
+Get requests to https://api.426twitter20.com/users/:id will return a JSON UserView object, which is a User object without the password field.
 body: N/A
 
 
 
-Get requests to https://comp426finalbackendactual2.herokuapp.com/users/current will get a User object for the currently logged in user.
+Get requests to https://api.426twitter20.com/users/current will get a User object for the currently logged in user.
 body: N/A
 
 
 
-Put requests to https://comp426finalbackendactual2.herokuapp.com/users/:id will update a stored User object if the following fields are included in the body of the request. If successful, it will send back a UserView object of the user in question. Request will be denied unless the currently-logged-in user is an admin account or is logged in on the account with ID :id.
+Put requests to https://api.426twitter20.com/users/:id will update a stored User object if the following fields are included in the body of the request. If successful, it will send back a UserView object of the user in question. Request will be denied unless the currently-logged-in user is an admin account or is logged in on the account with ID :id.
 body:
         userId: A string containing the user ID of the currently logged in user. Must match the :id in the URL.
         currentPassword: A string containing the user's current password. Must match the password stored on the server.
